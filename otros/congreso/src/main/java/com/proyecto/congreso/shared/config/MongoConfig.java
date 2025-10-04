@@ -13,7 +13,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @ConditionalOnBean(MongoTemplate.class)
 @EnableMongoRepositories(basePackages = {
     "com.proyecto.congreso.notification.repository",
-    "com.proyecto.congreso.batch.repository"
+        "com.proyecto.congreso.points.repository",
+        "com.proyecto.congreso.asistencias.repository"
 })
 public class MongoConfig {
 }

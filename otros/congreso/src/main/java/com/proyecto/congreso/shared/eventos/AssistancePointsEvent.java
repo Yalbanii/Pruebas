@@ -1,9 +1,7 @@
 package com.proyecto.congreso.shared.eventos;
 
 import lombok.*;
-import org.springframework.context.ApplicationEvent;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 
 //Acumulacion de puntos
@@ -18,4 +16,7 @@ public class AssistancePointsEvent{
     private Integer amountPoints;
     private Integer pointsAfter;
     private LocalDateTime timestamp;
+
+    public AssistancePointsEvent(Long passId, Integer addPoints) {
+    }
 }

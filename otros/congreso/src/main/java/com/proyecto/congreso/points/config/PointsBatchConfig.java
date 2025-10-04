@@ -4,6 +4,7 @@ import com.proyecto.congreso.points.dto.PassPointsData;
 import com.proyecto.congreso.points.listener.BatchJobExecutionMongoListener;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;
+import com.proyecto.congreso.shared.eventos.AssistancePointsEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -23,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 /**
@@ -64,7 +64,6 @@ public class PointsBatchConfig {
 
         return new JobBuilder("pointsJob", jobRepository)
                 .start(calculateAndApplyPointsStep())
-                .next(publishEventsStep())
                 .build();
     }
 
@@ -76,7 +75,7 @@ public class PointsBatchConfig {
                 .<Pass, PassPointsData>chunk(10, transactionManager)
                 .reader(passReader())
                 .processor(pointsCalculatorProcessor())
-                .writer(pointsApplierWriter())
+                .writer(pointsEventPublisherWriter())
                 .build();
     }
 
@@ -112,68 +111,90 @@ public class PointsBatchConfig {
     }
 
     // ---------- WRITER -----------
-    @Bean
-            public ItemWriter<PassPointsData> pointsApplierWriter() {
-                return items -> {
-                    for (PassPointsData data : items) {
-                        if (data != null) {
-                            Pass pass = passRepository.findById(data.getPassId())
-                                    .orElseThrow(() -> new IllegalArgumentException(
-                                            "Pass not found: " + data.getPassId()));
-
-                            Integer previousPointsBalance = pass.getPointsBalance();
-                            Integer newPointsBalance = previousPointsBalance + data.getAddPoints();
-                            pass.setPointsBalance(newPointsBalance);
-                            pass.setPointsBalance(newPointsBalance);
-                            passRepository.save(pass);
-
-                            log.info("✅ Points applied to Pass {}: {} (Old: ${}, New: ${})",
-                                    pass.getPassId(),
-                                    data.getAddPoints(),
-                                    data.getOriginalPointsBalance(),
-                                    newPointsBalance);
-                        }
-                    }
-                };
-            }
-
 
     @Bean
-    public ItemWriter<PassPointsData> pointsUsedWriter() {
+    public ItemWriter<PassPointsData> pointsEventPublisherWriter() {
         return items -> {
             for (PassPointsData data : items) {
                 if (data != null) {
-                    Pass pass = passRepository.findById(data.getPassId())
-                            .orElseThrow(() -> new IllegalArgumentException(
-                                    "Pass not found: " + data.getPassId()));
+                    // ❌ PROBLEMA DE FALLO SOLUCIONADO: Ya no intentamos GUARDAR aquí.
+                    // Simplemente publicamos el evento para que el Listener lo maneje.
 
-                    Integer previousPointsBalance = pass.getPointsBalance();
-                    Integer newPointsBalance = previousPointsBalance-POINTS_COST_FREEBIES;
-                    pass.setPointsBalance(newPointsBalance);
-                    pass.setUpdatedAt(LocalDateTime.now());
+                    // Asegúrate de que tu AssistancePointsEvent acepte (passId, puntosSumados)
+                    AssistancePointsEvent event = new AssistancePointsEvent(
+                            data.getPassId(),
+                            data.getAddPoints() // O POINTS_PER_CONFERENCE si no lo pusiste en data
+                    );
 
-                    passRepository.save(pass);
-
-                    log.info("✅ Points used from Pass {}: {} (Old: ${}, New: ${})",
-                            pass.getPassId(),
-                            data.getAddPoints(),
-                            data.getOriginalPointsBalance(),
-                            newPointsBalance);
+                    eventPublisher.publishEvent(event);
+                    log.debug("✅ AssistancePointsEvent publicado para Pass ID: {}", data.getPassId());
                 }
             }
         };
     }
-        // ========== PUBLISH EVENTS FOR MONGO LOGS ==========
-
-        @Bean
-        public Step publishEventsStep() {
-            return new StepBuilder("publishEventsStep", jobRepository)
-                    .tasklet((contribution, chunkContext) -> {
-                        log.info("✅ Step 2: Events published successfully. MongoDB logs created via event listeners.");
-                        return org.springframework.batch.repeat.RepeatStatus.FINISHED;
-                    }, transactionManager)
-                    .build();
-        }
+//
+//    @Bean
+//            public ItemWriter<PassPointsData> pointsApplierWriter() {
+//                return items -> {
+//                    for (PassPointsData data : items) {
+//                        if (data != null) {
+//                            Pass pass = passRepository.findById(data.getPassId())
+//                                    .orElseThrow(() -> new IllegalArgumentException(
+//                                            "Pass not found: " + data.getPassId()));
+//
+//                            Integer previousPointsBalance = pass.getPointsBalance();
+//                            Integer newPointsBalance = previousPointsBalance + data.getAddPoints();
+//                            pass.setPointsBalance(newPointsBalance);
+//                            pass.setPointsBalance(newPointsBalance);
+//                            passRepository.save(pass);
+//
+//                            log.info("✅ Points applied to Pass {}: {} (Old: ${}, New: ${})",
+//                                    pass.getPassId(),
+//                                    data.getAddPoints(),
+//                                    data.getOriginalPointsBalance(),
+//                                    newPointsBalance);
+//                        }
+//                    }
+//                };
+//            }
+//
+//
+//    @Bean
+//    public ItemWriter<PassPointsData> pointsUsedWriter() {
+//        return items -> {
+//            for (PassPointsData data : items) {
+//                if (data != null) {
+//                    Pass pass = passRepository.findById(data.getPassId())
+//                            .orElseThrow(() -> new IllegalArgumentException(
+//                                    "Pass not found: " + data.getPassId()));
+//
+//                    Integer previousPointsBalance = pass.getPointsBalance();
+//                    Integer newPointsBalance = previousPointsBalance-POINTS_COST_FREEBIES;
+//                    pass.setPointsBalance(newPointsBalance);
+//                    pass.setUpdatedAt(LocalDateTime.now());
+//
+//                    passRepository.save(pass);
+//
+//                    log.info("✅ Points used from Pass {}: {} (Old: ${}, New: ${})",
+//                            pass.getPassId(),
+//                            data.getAddPoints(),
+//                            data.getOriginalPointsBalance(),
+//                            newPointsBalance);
+//                }
+//            }
+//        };
+//    }
+//        // ========== PUBLISH EVENTS FOR MONGO LOGS ==========
+//
+//        @Bean
+//        public Step publishEventsStep() {
+//            return new StepBuilder("publishEventsStep", jobRepository)
+//                    .tasklet((contribution, chunkContext) -> {
+//                        log.info("✅ Step 2: Events published successfully. MongoDB logs created via event listeners.");
+//                        return org.springframework.batch.repeat.RepeatStatus.FINISHED;
+//                    }, transactionManager)
+//                    .build();
+//        }
 
 //        @Bean
 //    public ItemReader<PassPointsData> pointsDataReader(){

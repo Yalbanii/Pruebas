@@ -2,8 +2,8 @@ package com.proyecto.congreso.points.service;
 
 import com.proyecto.congreso.points.dto.ConferencePointsData;
 import com.proyecto.congreso.points.dto.FreebiePointsData;
-import com.proyecto.congreso.points.config.ConferenceDataImportedEvent;
-import com.proyecto.congreso.points.config.FreebieDataImportedEvent;
+import com.proyecto.congreso.shared.eventos.ConferenceDataImportedEvent;
+import com.proyecto.congreso.shared.eventos.FreebieDataImportedEvent;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

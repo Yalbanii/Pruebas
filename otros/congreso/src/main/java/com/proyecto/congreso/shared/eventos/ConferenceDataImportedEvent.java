@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.config;
+package com.proyecto.congreso.shared.eventos;
 
 import com.proyecto.congreso.points.dto.ConferencePointsData;
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Tag(name = "Movement Logs", description = "API para gestionar logs de movimientos de puntos en MongoDB")
+@Tag(name = "Movements", description = "API para gestionar logs de movimientos de puntos en MongoDB")
 @RestController
 @RequestMapping("/api/movimientos-logs")
 @RequiredArgsConstructor

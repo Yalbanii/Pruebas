@@ -8,10 +8,7 @@ import org.springframework.modulith.Modulithic;
 
 @Modulithic
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = {
-        "com.proyecto.congreso.participantes.repository",
-        "com.proyecto.congreso.pases.repository"
-})
+@EnableJpaRepositories
 @EnableMongoRepositories
 public class CongresoApplication {
 

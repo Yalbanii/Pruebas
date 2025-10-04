@@ -30,7 +30,11 @@ public class OpenApiConfig {
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("public")
-                .packagesToScan("com.proyecto.congreso.pases.controller", "com.proyecto.congreso.participantes.controller" )
+                .packagesToScan(
+                        "com.proyecto.congreso.pases.controller",
+                        "com.proyecto.congreso.participantes.controller",
+                        "com.proyecto.congreso.asistencias.controller"  // NUEVO: Controlador de asistencias
+                )
                 .build();
     }
 }

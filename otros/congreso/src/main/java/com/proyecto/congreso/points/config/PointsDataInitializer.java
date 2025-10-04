@@ -2,10 +2,12 @@ package com.proyecto.congreso.points.config;
 
 import com.proyecto.congreso.points.dto.ConferencePointsData;
 import com.proyecto.congreso.points.dto.FreebiePointsData;
-import com.proyecto.congreso.points.model.Conferencia;
+import com.proyecto.congreso.asistencia.model.Conferencia;
 import com.proyecto.congreso.points.model.Freebies;
 import com.proyecto.congreso.points.repository.ConferenceRepository;
 import com.proyecto.congreso.points.repository.FreebieRepository;
+import com.proyecto.congreso.shared.eventos.ConferenceDataImportedEvent;
+import com.proyecto.congreso.shared.eventos.FreebieDataImportedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
