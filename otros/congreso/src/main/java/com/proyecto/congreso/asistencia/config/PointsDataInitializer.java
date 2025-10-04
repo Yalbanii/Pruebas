@@ -1,11 +1,11 @@
 package com.proyecto.congreso.asistencia.config;
 
 import com.proyecto.congreso.asistencia.dto.ConferencePointsData;
-import com.proyecto.congreso.points.dto.FreebiePointsData;
+import com.proyecto.congreso.asistencia.model.FreebiePointsData;
 import com.proyecto.congreso.asistencia.model.Conferencia;
-import com.proyecto.congreso.points.model.Freebies;
+import com.proyecto.congreso.asistencia.model.Freebies;
 import com.proyecto.congreso.asistencia.repository.ConferenceRepository;
-import com.proyecto.congreso.points.repository.FreebieRepository;
+import com.proyecto.congreso.asistencia.repository.FreebieRepository;
 import com.proyecto.congreso.shared.eventos.ConferenceDataImportedEvent;
 import com.proyecto.congreso.shared.eventos.FreebieDataImportedEvent;
 import lombok.extern.slf4j.Slf4j;

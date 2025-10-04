@@ -1,10 +1,11 @@
-package com.proyecto.congreso.points.service;
+package com.proyecto.congreso.asistencia.service;
 
 import com.proyecto.congreso.pases.model.Pass;
+import com.proyecto.congreso.batch.service.PointsCalculator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PassPointsCalculatorFactory implements PointsCalculator{
+public class PassPointsCalculatorFactory implements PointsCalculator {
     // Lógica de Agregar Puntos (Implementación de la interfaz)
     @Override
     public Integer addPoints(Pass pass, Integer pointsAdd) {

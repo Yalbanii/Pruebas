@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.model;
+package com.proyecto.congreso.batch.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

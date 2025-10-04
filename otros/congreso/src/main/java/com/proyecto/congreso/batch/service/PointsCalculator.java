@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.service;
+package com.proyecto.congreso.batch.service;
 
 import com.proyecto.congreso.pases.model.Pass;
 

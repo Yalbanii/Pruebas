@@ -1,10 +1,10 @@
-package com.proyecto.congreso.points.service;
+package com.proyecto.congreso.asistencia.service;
 
 import com.proyecto.congreso.shared.eventos.ExchangeFailedEvent;
 import com.proyecto.congreso.shared.eventos.ExchangeRequestedEvent;
 import com.proyecto.congreso.shared.eventos.FreebieStockReservedEvent;
-import com.proyecto.congreso.points.model.Freebies;
-import com.proyecto.congreso.points.repository.FreebieRepository;
+import com.proyecto.congreso.asistencia.model.Freebies;
+import com.proyecto.congreso.asistencia.repository.FreebieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.dto;
+package com.proyecto.congreso.asistencia.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

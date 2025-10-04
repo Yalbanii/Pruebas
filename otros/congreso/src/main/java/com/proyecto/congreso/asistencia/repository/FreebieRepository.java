@@ -1,6 +1,6 @@
-package com.proyecto.congreso.points.repository;
+package com.proyecto.congreso.asistencia.repository;
 
-import com.proyecto.congreso.points.model.Freebies;
+import com.proyecto.congreso.asistencia.model.Freebies;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
-package com.proyecto.congreso.points.config;
+package com.proyecto.congreso.batch.config;
 
 import com.proyecto.congreso.asistencia.dto.PassPointsData;
-import com.proyecto.congreso.points.listener.BatchJobExecutionMongoListener;
+import com.proyecto.congreso.batch.listener.BatchJobExecutionMongoListener;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;
 import com.proyecto.congreso.shared.eventos.AssistancePointsEvent;
@@ -138,93 +138,4 @@ public class PointsBatchConfig {
             }
         };
     }
-//
-//    @Bean
-//            public ItemWriter<PassPointsData> pointsApplierWriter() {
-//                return items -> {
-//                    for (PassPointsData data : items) {
-//                        if (data != null) {
-//                            Pass pass = passRepository.findById(data.getPassId())
-//                                    .orElseThrow(() -> new IllegalArgumentException(
-//                                            "Pass not found: " + data.getPassId()));
-//
-//                            Integer previousPointsBalance = pass.getPointsBalance();
-//                            Integer newPointsBalance = previousPointsBalance + data.getAddPoints();
-//                            pass.setPointsBalance(newPointsBalance);
-//                            pass.setPointsBalance(newPointsBalance);
-//                            passRepository.save(pass);
-//
-//                            log.info("✅ Points applied to Pass {}: {} (Old: ${}, New: ${})",
-//                                    pass.getPassId(),
-//                                    data.getAddPoints(),
-//                                    data.getOriginalPointsBalance(),
-//                                    newPointsBalance);
-//                        }
-//                    }
-//                };
-//            }
-//
-//
-//    @Bean
-//    public ItemWriter<PassPointsData> pointsUsedWriter() {
-//        return items -> {
-//            for (PassPointsData data : items) {
-//                if (data != null) {
-//                    Pass pass = passRepository.findById(data.getPassId())
-//                            .orElseThrow(() -> new IllegalArgumentException(
-//                                    "Pass not found: " + data.getPassId()));
-//
-//                    Integer previousPointsBalance = pass.getPointsBalance();
-//                    Integer newPointsBalance = previousPointsBalance-POINTS_COST_FREEBIES;
-//                    pass.setPointsBalance(newPointsBalance);
-//                    pass.setUpdatedAt(LocalDateTime.now());
-//
-//                    passRepository.save(pass);
-//
-//                    log.info("✅ Points used from Pass {}: {} (Old: ${}, New: ${})",
-//                            pass.getPassId(),
-//                            data.getAddPoints(),
-//                            data.getOriginalPointsBalance(),
-//                            newPointsBalance);
-//                }
-//            }
-//        };
-//    }
-//        // ========== PUBLISH EVENTS FOR MONGO LOGS ==========
-//
-//        @Bean
-//        public Step publishEventsStep() {
-//            return new StepBuilder("publishEventsStep", jobRepository)
-//                    .tasklet((contribution, chunkContext) -> {
-//                        log.info("✅ Step 2: Events published successfully. MongoDB logs created via event listeners.");
-//                        return org.springframework.batch.repeat.RepeatStatus.FINISHED;
-//                    }, transactionManager)
-//                    .build();
-//        }
-
-//        @Bean
-//    public ItemReader<PassPointsData> pointsDataReader(){
-//        return new ItemReader<>() {
-//            private final List<PassPointsData> processedPass = new ArrayList<>();
-//            private int currentIndex = 0;
-//
-//            @Override
-//            public PassPointsData read(){
-//                //Lee el contexto del STEP 1
-//                if (processedPass.isEmpty()){
-//                    ExecutionContext context = stepExecution.getExecutionContext();
-//                    for (String key : context.toMap().keySet()){
-//                        PassPointsData data = (PassPointsData) context.get(key);
-//                        processedPass.add(data);
-//                    } if (currentIndex < processedPass.size()){
-//                        return processedPass.get(currentIndex++);
-//                    }
-//
-//                }  return null;
-//            }
-//
-//        };
-//
-//        }
-
 }

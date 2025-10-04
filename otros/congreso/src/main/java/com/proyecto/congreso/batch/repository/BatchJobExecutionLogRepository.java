@@ -1,6 +1,6 @@
-package com.proyecto.congreso.points.repository;
+package com.proyecto.congreso.batch.repository;
 
-import com.proyecto.congreso.points.model.BatchJobExecutionLog;
+import com.proyecto.congreso.batch.model.BatchJobExecutionLog;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

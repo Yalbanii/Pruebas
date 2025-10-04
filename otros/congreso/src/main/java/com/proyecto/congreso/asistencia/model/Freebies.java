@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.model;
+package com.proyecto.congreso.asistencia.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -28,7 +28,6 @@ public class ParticipantController {
     public ResponseEntity<ParticipantResponse> createParticipant(@Valid @RequestBody ParticipantRequest request) {
 
         Participant participant = new Participant();
-        participant.setParticipantId(request.getParticipantId());
         participant.setName(request.getName());
         participant.setLastName(request.getLastName());
         participant.setEmail(request.getEmail());

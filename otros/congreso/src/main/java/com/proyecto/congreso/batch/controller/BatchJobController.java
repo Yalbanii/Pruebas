@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.controller;
+package com.proyecto.congreso.batch.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

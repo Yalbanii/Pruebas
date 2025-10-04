@@ -1,7 +1,7 @@
-package com.proyecto.congreso.points.listener;
+package com.proyecto.congreso.batch.listener;
 
-import com.proyecto.congreso.points.model.BatchJobExecutionLog;
-import com.proyecto.congreso.points.repository.BatchJobExecutionLogRepository;
+import com.proyecto.congreso.batch.model.BatchJobExecutionLog;
+import com.proyecto.congreso.batch.repository.BatchJobExecutionLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
