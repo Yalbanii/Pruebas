@@ -1,9 +1,7 @@
 package com.proyecto.congreso.shared.eventos;
 
 import lombok.*;
-import org.springframework.context.ApplicationEvent;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 
 @Data

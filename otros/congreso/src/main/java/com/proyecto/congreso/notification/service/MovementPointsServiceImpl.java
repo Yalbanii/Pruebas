@@ -1,6 +1,6 @@
 package com.proyecto.congreso.notification.service;
 
-import com.proyecto.congreso.shared.eventos.AssistancePointsEvent;
+import com.proyecto.congreso.shared.eventos.AssistanceRegisteredEvent;
 import com.proyecto.congreso.shared.eventos.FreebieExchangeEvent;
 import com.proyecto.congreso.notification.model.MovementPointsLog;
 import com.proyecto.congreso.notification.repository.MovementPointsLogRepository;
@@ -109,8 +109,8 @@ public class MovementPointsServiceImpl implements MovementPointsLogService{
 
     // Event Listeners
     @ApplicationModuleListener
-    public void handleMovementCompleted(AssistancePointsEvent event) {
-        log.debug("Logging AssistancePointsEvent for Pass: {}", event.getPassId());
+    public void handleMovementCompleted(AssistanceRegisteredEvent event) {
+        log.debug("Logging AssistanceRegisteredEvent for Pass: {}", event.getPassId());
 
         MovementPointsLog log = MovementPointsLog.builder()
                 .passId(event.getPassId())

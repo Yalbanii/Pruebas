@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AssistancePointsEvent{
+public class AssistanceRegisteredEvent {
     // Tipo de movimiento: ADD, USE, etc.
     private String movementType;
 
@@ -36,7 +36,7 @@ public class AssistancePointsEvent{
     // Timestamp del evento
     private LocalDateTime timestamp;
 
-    public AssistancePointsEvent(Long passId, Integer addPoints) {
+    public AssistanceRegisteredEvent(Long passId, Long conferenciaId, String titulo, Integer puntos) {
     }
 
 
@@ -45,16 +45,16 @@ public class AssistancePointsEvent{
      * Solo se necesita el passId y los puntos a agregar.
      * El resto se calcula en el handler.
      */
-    public static AssistancePointsEvent forAttendance(Long passId, Long participantId,
-                                                      Long conferenceId, String conferenciaTitle,
-                                                      Integer points) {
-        return AssistancePointsEvent.builder()
-                .passId(passId)
-                .targetParticipantId(participantId)
-                .sourceConferenceId(conferenceId.toString())
-                .amountPoints(points)
-                .movementType("ATTENDANCE")
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
+//    public static AssistanceRegisteredEvent forAttendance(Long passId, Long participantId,
+//                                                          Long conferenceId, String conferenciaTitle,
+//                                                          Integer points) {
+//        return AssistanceRegisteredEvent.builder()
+//                .passId(passId)
+//                .targetParticipantId(participantId)
+//                .sourceConferenceId(conferenceId.toString())
+//                .amountPoints(points)
+//                .movementType("ATTENDANCE")
+//                .timestamp(LocalDateTime.now())
+//                .build();
+//    }
 }

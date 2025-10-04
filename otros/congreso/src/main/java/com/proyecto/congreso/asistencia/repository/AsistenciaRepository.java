@@ -32,6 +32,8 @@ public interface AsistenciaRepository  extends MongoRepository<Asistencia, Strin
     // Buscar por Pass y estado
     List<Asistencia> findByPassIdAndStatus(Long passId, String status);
 
+    List<Asistencia> findByStatus(String status);
+
     // Calcular total de puntos acumulados por Pass
     @Query("{ 'passId': ?0, 'status': 'PROCESADA' }")
     List<Asistencia> findAsistenciasProcedasByPass(Long passId);

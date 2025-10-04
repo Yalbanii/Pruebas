@@ -28,7 +28,6 @@ public class ParticipantRequestValidationTest {
     /** Crea un objeto request válido por defecto */
     private ParticipantRequest createValidRequest() {
         return new ParticipantRequest(
-                1L, // participantId
                 "Juan", // name
                 "Perez", // lastName
                 "juan.perez@test.com", // email
