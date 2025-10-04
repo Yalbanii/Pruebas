@@ -33,7 +33,7 @@ public class OpenApiConfig {
                 .packagesToScan(
                         "com.proyecto.congreso.pases.controller",
                         "com.proyecto.congreso.participantes.controller",
-                        "com.proyecto.congreso.asistencias.controller"  // NUEVO: Controlador de asistencias
+                        "com.proyecto.congreso.asistencia.controller"  // NUEVO: Controlador de asistencias
                 )
                 .build();
     }

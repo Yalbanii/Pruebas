@@ -1,6 +1,6 @@
 package com.proyecto.congreso.points.config;
 
-import com.proyecto.congreso.points.dto.PassPointsData;
+import com.proyecto.congreso.asistencia.dto.PassPointsData;
 import com.proyecto.congreso.points.listener.BatchJobExecutionMongoListener;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;

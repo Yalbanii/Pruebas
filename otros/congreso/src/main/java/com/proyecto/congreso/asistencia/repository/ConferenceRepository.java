@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.repository;
+package com.proyecto.congreso.asistencia.repository;
 
 import com.proyecto.congreso.asistencia.model.Conferencia;
 import org.springframework.data.mongodb.repository.MongoRepository;

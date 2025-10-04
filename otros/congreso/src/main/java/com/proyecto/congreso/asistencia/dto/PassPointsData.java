@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.dto;
+package com.proyecto.congreso.asistencia.dto;
 
 import com.proyecto.congreso.pases.model.Pass;
 import jakarta.validation.constraints.NotNull;

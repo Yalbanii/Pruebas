@@ -1,6 +1,6 @@
-package com.proyecto.congreso.points.service;
+package com.proyecto.congreso.shared.config;
 
-import com.proyecto.congreso.points.dto.ConferencePointsData;
+import com.proyecto.congreso.asistencia.dto.ConferencePointsData;
 import com.proyecto.congreso.points.dto.FreebiePointsData;
 import com.proyecto.congreso.shared.eventos.ConferenceDataImportedEvent;
 import com.proyecto.congreso.shared.eventos.FreebieDataImportedEvent;

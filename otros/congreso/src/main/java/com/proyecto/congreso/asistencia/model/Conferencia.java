@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "conferencias")
 public class Conferencia {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conferenciaId;
 
     @Column(name = "DIA")
