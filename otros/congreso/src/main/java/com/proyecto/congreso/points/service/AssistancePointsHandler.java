@@ -1,9 +1,11 @@
-package com.proyecto.congreso.asistencia.service;
+package com.proyecto.congreso.points.service;
 
+import com.proyecto.congreso.asistencia.model.Conferencia;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;
 import com.proyecto.congreso.shared.eventos.AssistancePointsEvent;
 import com.proyecto.congreso.shared.eventos.CertificateEvent;
+import com.proyecto.congreso.shared.eventos.ConferenceAttendanceTriggerEvent;
 import com.proyecto.congreso.shared.eventos.SpecialAccessEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -98,4 +100,5 @@ public class AssistancePointsHandler {
             log.info("🏆 LOGRO DESBLOQUEADO: Acceso Especial para Pass ID {}", pass.getPassId());
         }
     }
+
 }

@@ -8,13 +8,17 @@ import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;
 import com.proyecto.congreso.asistencia.repository.ConferenceRepository;
 import com.proyecto.congreso.shared.eventos.AssistancePointsEvent;
+import com.proyecto.congreso.shared.eventos.ConferenceAttendanceTriggerEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -149,5 +153,27 @@ public class AssistanceService {
     public long countAsistenciasByPass(Long passId) {
         log.debug("🔍 Contando asistencias del Pass: {}", passId);
         return asistenciaRepository.countByPassId(passId);
+    }
+
+    @EventListener
+    @Async
+    public void handleAttendanceTrigger(ConferenceAttendanceTriggerEvent event) {
+        // 1. Acceso a MONGO DB (a través del ConferenceRepository)
+        //    Tu ConferenceRepository debe ser un MongoRepository.
+        Optional<Conferencia> optionalConf = conferenceRepository.findById(event.conferenciaId());
+
+        // ... (Manejo de Optional) ...
+
+        Integer puntosGanados = optionalConf.get().getPuntos(); // Dato extraído de Mongo
+
+        // 2. Publica el evento de Puntos. Este evento SÓLO lleva los datos necesarios
+        //    para la actualización final: qué actualizar (PassID) y cuánto (Puntos).
+        AssistancePointsEvent pointsEvent = new AssistancePointsEvent(
+                // ... otros campos ...
+                event.passId(),
+                puntosGanados // Puntos ganados que provienen de MONGO
+                // ... otros campos ...
+        );
+        eventPublisher.publishEvent(pointsEvent);
     }
 }

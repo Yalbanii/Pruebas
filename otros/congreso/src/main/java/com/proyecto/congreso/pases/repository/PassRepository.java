@@ -33,5 +33,5 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
 
     // Buscar cuentas activas (para batch processing)
     @Query("SELECT a FROM Pass a WHERE a.status = 'ACTIVE'")
-    List<Pass> findByActive();
+    List<Pass> findActivePass();
 }

@@ -8,16 +8,16 @@ import com.proyecto.congreso.asistencia.repository.ConferenceRepository;
 import com.proyecto.congreso.points.repository.FreebieRepository;
 import com.proyecto.congreso.shared.eventos.ConferenceDataImportedEvent;
 import com.proyecto.congreso.shared.eventos.FreebieDataImportedEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Slf4j
 @Service
 public class PointsDataInitializer {
     private final FreebieRepository repository;
     private final ConferenceRepository conferenceRepository;
-
 
     public PointsDataInitializer(FreebieRepository repository, ConferenceRepository conferenceRepository) {
         this.repository = repository;
@@ -39,8 +39,10 @@ public class PointsDataInitializer {
         freebie.setFreebieId(data.getFreebieId());
         freebie.setArticulo(data.getArticulo());
         freebie.setCosto(data.getCosto());
-        freebie.setStockActual(data.getStockActual()); // Usa el stock inicial
+        freebie.setStockActual(data.getStockActual());
         repository.save(freebie);
+
+        log.debug("✅ Freebie guardado: ID={}, Articulo={}", data.getFreebieId(), data.getArticulo());
     }
 
     @EventListener
@@ -53,11 +55,19 @@ public class PointsDataInitializer {
             return; // Ya cargado
         }
 
-        //Convertir DTO a Entidad Conferencia
+        //Convertir DTO a Entidad Conferencia CON TODOS LOS CAMPOS
         Conferencia conferencia = new Conferencia();
         conferencia.setConferenciaId(data.getConferenciaId());
+        conferencia.setTitulo(data.getTitulo());  //Guardar el título
         conferencia.setPuntos(data.getPuntos());
-        conferenceRepository.save(conferencia);
-    }
+        conferencia.setDia(data.getDia());
+        conferencia.setSede(data.getSede());
+        conferencia.setTipo(data.getTipo());
+        conferencia.setPonente(data.getPonente());
 
+        conferenceRepository.save(conferencia);
+
+        log.debug("✅ Conferencia guardada: ID={}, Titulo={}, Puntos={}",
+                data.getConferenciaId(), data.getTitulo(), data.getPuntos());
+    }
 }

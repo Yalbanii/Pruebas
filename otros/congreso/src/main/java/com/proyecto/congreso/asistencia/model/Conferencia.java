@@ -16,7 +16,7 @@ public class Conferencia {
     private Long conferenciaId;
 
     @Column(name = "DIA")
-    private Integer dia;
+    private String dia;
 
     @Column(name = "FECHA")
     private Long fecha;

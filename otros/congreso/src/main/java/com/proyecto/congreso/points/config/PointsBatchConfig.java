@@ -32,6 +32,8 @@ import java.util.Collections;
  * Job: addJob y useJob
  * Step 1: calculatePoints - Lee pases, calcula y agrega puntos.
  * Step 2: publishEventsStep - Publica eventos para logs en MongoDB
+ Job: pointsJob
+ * Step: calculateAndApplyPointsStep - Lee pases activos, calcula y publica eventos
  */
 @Slf4j
 @Configuration
@@ -62,7 +64,7 @@ public class PointsBatchConfig {
             jobBuilder.listener(batchJobExecutionMongoListener);
         }
 
-        return new JobBuilder("pointsJob", jobRepository)
+        return jobBuilder
                 .start(calculateAndApplyPointsStep())
                 .build();
     }
@@ -87,7 +89,7 @@ public class PointsBatchConfig {
                 .name("passReader")
                 .repository(passRepository)
                 .methodName("findActivePass")
-                .sorts(Collections.singletonMap("id", Sort.Direction.ASC))
+                .sorts(Collections.singletonMap("passId", Sort.Direction.ASC))
                 .pageSize(10)
                 .build();
     }
@@ -97,18 +99,23 @@ public class PointsBatchConfig {
     @Bean
     public ItemProcessor<Pass, PassPointsData> pointsCalculatorProcessor() {
         return pass -> {
-            log.info("Processing Pass: {} (Type: {}, Balance of Points: {})",
+            log.info("📊 Processing Pass: {} (Balance: {})",
                     pass.getPassId(),
-                    pass.getPassType(),
                     pass.getPointsBalance());
-                if (pass.getPointsBalance() > 25) {
-                    log.info("You reached the Certificate!");
-                    return new PassPointsData(pass.getPassId(), pass.getPointsBalance(), POINTS_PER_CONFERENCE);
-                }
-                return null;
 
+            // Ejemplo: Procesar solo pases con menos de 50 puntos
+            if (pass.getPointsBalance() < 50) {
+                return new PassPointsData(
+                        pass.getPassId(),
+                        pass.getPointsBalance(),
+                        POINTS_PER_CONFERENCE
+                );
+            }
+
+            return null; // Skip este Pass
         };
     }
+
 
     // ---------- WRITER -----------
 
@@ -117,17 +124,16 @@ public class PointsBatchConfig {
         return items -> {
             for (PassPointsData data : items) {
                 if (data != null) {
-                    // ❌ PROBLEMA DE FALLO SOLUCIONADO: Ya no intentamos GUARDAR aquí.
-                    // Simplemente publicamos el evento para que el Listener lo maneje.
-
-                    // Asegúrate de que tu AssistancePointsEvent acepte (passId, puntosSumados)
-                    AssistancePointsEvent event = new AssistancePointsEvent(
-                            data.getPassId(),
-                            data.getAddPoints() // O POINTS_PER_CONFERENCE si no lo pusiste en data
-                    );
+                    // Publicar evento para que AssistancePointsHandler lo procese
+                    AssistancePointsEvent event = AssistancePointsEvent.builder()
+                            .passId(data.getPassId())
+                            .amountPoints(data.getAddPoints())
+                            .movementType("BATCH_ADD")
+                            .build();
 
                     eventPublisher.publishEvent(event);
-                    log.debug("✅ AssistancePointsEvent publicado para Pass ID: {}", data.getPassId());
+                    log.info("✅ Evento publicado para Pass ID: {} (+{} puntos)",
+                            data.getPassId(), data.getAddPoints());
                 }
             }
         };

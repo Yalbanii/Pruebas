@@ -39,6 +39,7 @@ public class AssistancePointsEvent{
     public AssistancePointsEvent(Long passId, Integer addPoints) {
     }
 
+
     /*
      * Constructor simplificado para el caso más común:
      * Solo se necesita el passId y los puntos a agregar.

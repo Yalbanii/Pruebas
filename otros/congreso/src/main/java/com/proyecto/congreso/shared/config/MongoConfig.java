@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(basePackages = {
     "com.proyecto.congreso.notification.repository",
         "com.proyecto.congreso.points.repository",
-        "com.proyecto.congreso.asistencias.repository"
+        "com.proyecto.congreso.asistencia.repository"
 })
 public class MongoConfig {
 }

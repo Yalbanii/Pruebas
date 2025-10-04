@@ -35,11 +35,11 @@ public class Pass {
     private Integer pointsSpecialAccess = 30;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "points_add", nullable = false, length = 20)
+    @Column(name = "points_add", nullable = true, length = 20)
     private PointsMovementAdd pointsAdd;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "points_use", nullable = false, length = 20)
+    @Column(name = "points_use", nullable = true, length = 20)
     private PointsMovementUse pointsUse;
 
     @NotNull(message = "Participant ID is required")
