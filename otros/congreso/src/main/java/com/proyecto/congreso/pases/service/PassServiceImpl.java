@@ -1,5 +1,7 @@
 package com.proyecto.congreso.pases.service;
 
+import com.proyecto.congreso.participantes.model.Participant;
+import com.proyecto.congreso.participantes.repository.ParticipantRepository;
 import com.proyecto.congreso.points.exchange.events.ExchangeRequestedEvent;
 import com.proyecto.congreso.pases.events.PassAdquiredEvent;
 import com.proyecto.congreso.pases.model.Pass;
@@ -19,7 +21,7 @@ import java.util.Random;
 @Transactional
 public class PassServiceImpl implements PassService {
 
-
+    private final ParticipantRepository participantRepository;
     private final PassRepository passRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final Random random = new Random();
@@ -29,7 +31,7 @@ public class PassServiceImpl implements PassService {
         log.debug("Creating Pass for Participant: {}", pass.getParticipantId());
 
         // Validar que el Participante existe
-        Pass passParticipant = passRepository.findById(pass.getParticipantId())
+        Participant passParticipant = participantRepository.findById(pass.getParticipantId())
                 .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + pass.getParticipantId()));
 
         // Establecer estado inicial

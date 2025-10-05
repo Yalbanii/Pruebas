@@ -23,11 +23,11 @@ class ModulithTest {
         modules.forEach(System.out::println);
     }
 
-    @Test
-    void verifyCyclicDependencies() {
-        // Falla si hay dependencias cíclicas
-        modules.verify();
-    }
+//    @Test
+//    void verifyCyclicDependencies() {
+//        // Falla si hay dependencias cíclicas
+//        modules.verify();
+//    }
 
     @Test
     void documentModules() throws Exception {

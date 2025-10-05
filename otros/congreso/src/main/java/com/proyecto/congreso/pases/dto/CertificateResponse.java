@@ -26,9 +26,6 @@ public class CertificateResponse {
     private String certificateCode;
     private LocalDateTime createdAt;
 
-    /**
-     * Convierte una entidad CertificateRecord a DTO Response
-     */
     public static CertificateResponse fromEntity(Certificate certificate) {
         return new CertificateResponse(
                 certificate.getCertificateId(),
