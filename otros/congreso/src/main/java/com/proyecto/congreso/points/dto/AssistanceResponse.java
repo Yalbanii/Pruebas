@@ -1,6 +1,6 @@
-package com.proyecto.congreso.asistencia.dto;
+package com.proyecto.congreso.points.dto;
 
-import com.proyecto.congreso.asistencia.model.Asistencia;
+import com.proyecto.congreso.points.model.Asistencia;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +18,7 @@ public class AssistanceResponse {  private String id;
     private Integer puntosOtorgados;
     private LocalDateTime fechaAsistencia;
     private String status;
+
 
     public static AssistanceResponse fromEntity(Asistencia asistencia) {
         return new AssistanceResponse(

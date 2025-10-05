@@ -1,4 +1,4 @@
-package com.proyecto.congreso.batch.dto;
+package com.proyecto.congreso.points.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

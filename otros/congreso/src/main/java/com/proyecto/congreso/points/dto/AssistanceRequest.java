@@ -1,4 +1,4 @@
-package com.proyecto.congreso.asistencia.dto;
+package com.proyecto.congreso.points.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

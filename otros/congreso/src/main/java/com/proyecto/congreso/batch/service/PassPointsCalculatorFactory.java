@@ -1,7 +1,6 @@
-package com.proyecto.congreso.asistencia.service;
+package com.proyecto.congreso.batch.service;
 
 import com.proyecto.congreso.pases.model.Pass;
-import com.proyecto.congreso.batch.service.PointsCalculator;
 import org.springframework.stereotype.Component;
 
 @Component

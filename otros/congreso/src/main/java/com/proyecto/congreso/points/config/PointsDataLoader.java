@@ -1,7 +1,7 @@
-package com.proyecto.congreso.shared.config;
+package com.proyecto.congreso.points.config;
 
-import com.proyecto.congreso.asistencia.dto.ConferencePointsData;
-import com.proyecto.congreso.asistencia.model.FreebiePointsData;
+import com.proyecto.congreso.points.dto.ConferencePointsData;
+import com.proyecto.congreso.points.model.FreebiePointsData;
 import com.proyecto.congreso.shared.eventos.ConferenceDataImportedEvent;
 import com.proyecto.congreso.shared.eventos.FreebieDataImportedEvent;
 import org.springframework.boot.CommandLineRunner;

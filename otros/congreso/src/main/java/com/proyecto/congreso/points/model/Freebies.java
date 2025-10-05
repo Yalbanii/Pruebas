@@ -1,4 +1,4 @@
-package com.proyecto.congreso.asistencia.model;
+package com.proyecto.congreso.points.model;
 
 import org.springframework.data.annotation.Id;
 import lombok.*;

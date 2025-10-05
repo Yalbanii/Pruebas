@@ -1,8 +1,8 @@
 package com.proyecto.congreso.batch.config;
 
-import com.proyecto.congreso.asistencia.model.Asistencia;
-import com.proyecto.congreso.asistencia.repository.AsistenciaRepository;
-import com.proyecto.congreso.batch.dto.AsistenciaPointsData;
+import com.proyecto.congreso.points.model.Asistencia;
+import com.proyecto.congreso.points.repository.AsistenciaRepository;
+import com.proyecto.congreso.points.dto.AsistenciaPointsData;
 import com.proyecto.congreso.batch.listener.BatchJobExecutionMongoListener;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;

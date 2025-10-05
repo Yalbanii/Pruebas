@@ -1,10 +1,10 @@
-package com.proyecto.congreso.asistencia.service;
+package com.proyecto.congreso.points.service;
 
-import com.proyecto.congreso.asistencia.dto.AssistanceResponse;
-import com.proyecto.congreso.asistencia.model.Asistencia;
-import com.proyecto.congreso.asistencia.model.Conferencia;
-import com.proyecto.congreso.asistencia.repository.AsistenciaRepository;
-import com.proyecto.congreso.asistencia.repository.ConferenceRepository;
+import com.proyecto.congreso.points.dto.AssistanceResponse;
+import com.proyecto.congreso.points.model.Asistencia;
+import com.proyecto.congreso.points.model.Conferencia;
+import com.proyecto.congreso.points.repository.AsistenciaRepository;
+import com.proyecto.congreso.points.repository.ConferenceRepository;
 import com.proyecto.congreso.shared.eventos.AssistanceRegisteredEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

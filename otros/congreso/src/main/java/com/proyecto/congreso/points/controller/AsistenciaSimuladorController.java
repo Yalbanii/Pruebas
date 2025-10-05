@@ -1,8 +1,8 @@
-package com.proyecto.congreso.asistencia.controller;
+package com.proyecto.congreso.points.controller;
 
-import com.proyecto.congreso.asistencia.dto.AssistanceRequest;
-import com.proyecto.congreso.asistencia.dto.AssistanceResponse;
-import com.proyecto.congreso.asistencia.service.AssistanceService;
+import com.proyecto.congreso.points.dto.AssistanceRequest;
+import com.proyecto.congreso.points.dto.AssistanceResponse;
+import com.proyecto.congreso.points.service.AssistanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
