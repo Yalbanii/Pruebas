@@ -1,8 +1,11 @@
 package com.proyecto.congreso.pases.controller;
 
+import com.proyecto.congreso.pases.dto.CertificateResponse;
 import com.proyecto.congreso.pases.dto.PassRequest;
 import com.proyecto.congreso.pases.dto.PassResponse;
+import com.proyecto.congreso.pases.model.Certificate;
 import com.proyecto.congreso.pases.model.Pass;
+import com.proyecto.congreso.pases.service.CertificateService;
 import com.proyecto.congreso.pases.service.PassService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class PassController {
 
     private final PassService passService;
+    private final CertificateService certificateService;
 
     @PostMapping("/pass")
     @Operation(summary = "Create a new Pass")
@@ -132,4 +136,5 @@ public class PassController {
         long count = passService.countPassByParticipantId(participantId);
         return ResponseEntity.ok(count);
     }
+
 }

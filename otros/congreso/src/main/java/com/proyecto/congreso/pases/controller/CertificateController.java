@@ -1,20 +1,17 @@
 package com.proyecto.congreso.pases.controller;
 
 import com.proyecto.congreso.pases.dto.CertificateResponse;
-import com.proyecto.congreso.pases.model.Certificate;
 import com.proyecto.congreso.pases.service.CertificateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/constancias")
 @RequiredArgsConstructor
@@ -33,11 +30,5 @@ public class CertificateController {
         return ResponseEntity.ok(certificate);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get Certificate by Pass ID")
-    public ResponseEntity<CertificateResponse> findByPassId(@PathVariable Long id) {
-        Certificate pass = (Certificate) certificateService.findByPassId(id);
-        return ResponseEntity.ok(CertificateResponse.fromEntity(pass));
-    }
-
 }
+

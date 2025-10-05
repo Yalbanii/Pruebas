@@ -2,13 +2,13 @@ package com.proyecto.congreso.pases.service;
 
 import com.proyecto.congreso.participantes.model.Participant;
 import com.proyecto.congreso.participantes.repository.ParticipantRepository;
-import com.proyecto.congreso.pases.events.SpecialAccessEvent;
 import com.proyecto.congreso.pases.model.Certificate;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.CertificateRepository;
 import com.proyecto.congreso.pases.repository.PassRepository;
 import com.proyecto.congreso.points.assistance.events.AssistanceRegisteredEvent;
 import com.proyecto.congreso.pases.events.CertificateEvent;
+import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
 import com.proyecto.congreso.points.exchange.events.ExchangeFailedEvent;
 import com.proyecto.congreso.points.events.FreebieStockReservedEvent;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PassPointsEventHandler {
     private final PassRepository passRepository;
+    private final FreebieRepository freebieRepository;
     private final ParticipantRepository participantRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final CertificateRepository certificateRepository;

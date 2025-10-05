@@ -7,7 +7,6 @@ import java.util.List;
 public interface CertificateService {
 
     List<Certificate> getAllCertificate();
-    List<Certificate> findByPassId(Long passId);
     boolean existsByPassId(Long passId);
 
 }

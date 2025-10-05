@@ -24,4 +24,5 @@ public interface PassService {
     List<Pass> getPassByType(Pass.PassType passType);
     long countPassByParticipantId(Long participantId);
     boolean existsByPassId(Long passId);
+
 }

@@ -53,4 +53,6 @@ public class AssistanceRegisteredEvent {
         this.timestamp = LocalDateTime.now();
     }
 
+    public AssistanceRegisteredEvent(Long passId, Integer pointsToAdd) {
+    }
 }

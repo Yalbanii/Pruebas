@@ -24,19 +24,6 @@ public class ExchangeService {
     private final FreebieRepository freebieRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    /**
-     * Marca la asistencia a una conferencia.
-     *
-     * FLUJO CORRECTO:
-     * 1. Valida que la conferencia existe (MongoDB)
-     * 2. Obtiene participantId del Pass (API REST)
-     * 3. Verifica duplicados
-     * 4. Registra asistencia en MongoDB
-     * 5. Publica evento para que el módulo 'pases' sume puntos
-     *
-     * Este método NO suma puntos directamente, solo publica el evento.
-     * La suma de puntos la realiza PassPointsEventHandler de forma asíncrona.
-     */
     @Transactional
     public ExchangeResponse crearExchange(Long passId, String freebieId) {
         log.info("📋 Autorizando intercambio : Pass={}, Freebie={}", passId, freebieId);
@@ -87,7 +74,7 @@ public class ExchangeService {
      * el participantId en el request, pero eso requeriría que el cliente
      * lo conozca, lo cual no es ideal.
      */
-    private Long getParticipantIdFromPass(Long passId) {
+    Long getParticipantIdFromPass(Long passId) {
         try {
             PassResponse response = new PassResponse();
 

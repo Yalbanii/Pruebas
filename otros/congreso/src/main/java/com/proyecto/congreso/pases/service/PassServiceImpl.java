@@ -2,6 +2,7 @@ package com.proyecto.congreso.pases.service;
 
 import com.proyecto.congreso.participantes.model.Participant;
 import com.proyecto.congreso.participantes.repository.ParticipantRepository;
+import com.proyecto.congreso.pases.model.Certificate;
 import com.proyecto.congreso.points.exchange.events.ExchangeRequestedEvent;
 import com.proyecto.congreso.pases.events.PassAdquiredEvent;
 import com.proyecto.congreso.pases.model.Pass;
@@ -12,6 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 

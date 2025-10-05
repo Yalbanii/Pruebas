@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.service;
+package com.proyecto.congreso.participantes.service;
 
 import com.proyecto.congreso.points.assistance.model.Asistencia;
 import com.proyecto.congreso.points.assistance.service.AssistanceService;

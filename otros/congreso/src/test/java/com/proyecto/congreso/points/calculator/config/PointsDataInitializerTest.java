@@ -1,4 +1,4 @@
-package com.proyecto.congreso.points.config;
+package com.proyecto.congreso.points.calculator.config;
 
 import com.proyecto.congreso.points.calculator.config.PointsDataInitializer;
 import com.proyecto.congreso.points.calculator.dto.ConferencePointsData;

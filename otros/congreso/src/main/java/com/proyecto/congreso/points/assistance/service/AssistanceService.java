@@ -15,17 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Servicio para gestionar asistencias a conferencias.
- * Principios aplicados:
- * - Desacoplamiento mediante eventos
- * - Responsabilidad única: solo gestiona asistencias
- * - No conoce la implementación de otros módulos
- *  * PRINCIPIOS APLICADOS:
- *  * - Solo conoce su propio dominio (asistencia + conferencia)
- *  * - NO conoce Pass ni MySQL
- *  * - Publica eventos para comunicarse con otros módulos
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -34,21 +23,6 @@ public class AssistanceService {
     private final AsistenciaRepository asistenciaRepository;
     private final ConferenceRepository conferenceRepository;
     private final ApplicationEventPublisher eventPublisher;
-
-    /**
-     * Marca la asistencia a una conferencia.
-     *
-     * FLUJO CORRECTO:
-     * 1. Valida que la conferencia existe (MongoDB)
-     * 2. Obtiene participantId del Pass (API REST)
-     * 3. Verifica duplicados
-     * 4. Registra asistencia en MongoDB
-     * 5. Publica evento para que el módulo 'pases' sume puntos
-     *
-     * Este método NO suma puntos directamente, solo publica el evento.
-     * La suma de puntos la realiza PassPointsEventHandler de forma asíncrona.
-     */
-
 
     @Transactional
     public AssistanceResponse marcarAsistencia(Long passId, String conferenciaId) {

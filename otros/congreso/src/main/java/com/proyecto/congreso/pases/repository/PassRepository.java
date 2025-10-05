@@ -1,5 +1,6 @@
 package com.proyecto.congreso.pases.repository;
 
+import com.proyecto.congreso.pases.model.Certificate;
 import com.proyecto.congreso.pases.model.Pass;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,7 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
     // Buscar cuentas activas (para batch processing)
     @Query("SELECT a FROM Pass a WHERE a.status = 'ACTIVE'")
     List<Pass> findActivePass();
+
+    List<Pass> findByPassId(Long passId);
+
 }
