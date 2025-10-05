@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO de respuesta para consultas de certificados.
- * Similar a PassResponse o AssistanceResponse.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

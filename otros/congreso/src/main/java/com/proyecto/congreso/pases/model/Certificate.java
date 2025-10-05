@@ -8,12 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-/**
- * Modelo de datos para registrar certificados alcanzados.
- *
- * Se almacena en MySQL cuando un Pass alcanza los 25 puntos requeridos.
- * Esto crea un registro permanente del logro del participante.
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,11 +43,8 @@ public class Certificate {
     private LocalDateTime createdAt;
 
     @Column(name = "certificate_code", unique = true, length = 50)
-    private String certificateCode; // Código único del certificado
-
-    /**
-     * Factory method para crear un certificado cuando se alcanza el logro
-     */
+    private String certificateCode;
+    //Factory method
     public static Certificate create(
             Long passId,
             Long participantId,
@@ -69,17 +60,13 @@ public class Certificate {
         certificate.setPointsAchieved(pointsAchieved);
         certificate.setReached(true);
 
-        // Generar código único del certificado
         certificate.setCertificateCode(
                 generateCertificateCode(passId, participantId));
 
         return certificate;
     }
 
-    /**
-     * Genera un código único para el certificado
-     * Formato: CERT-{PASS_ID}-{PARTICIPANT_ID}-{TIMESTAMP}
-     */
+    // Codigo unico del certificado Formato: CERT-{PASS_ID}-{PARTICIPANT_ID}-{TIMESTAMP}
     private static String generateCertificateCode(Long passId, Long participantId) {
         long timestamp = System.currentTimeMillis();
         return String.format("CERT-%d-%d-%d", passId, participantId, timestamp);

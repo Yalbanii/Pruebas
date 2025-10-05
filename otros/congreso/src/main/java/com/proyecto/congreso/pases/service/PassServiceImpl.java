@@ -177,6 +177,7 @@ public class PassServiceImpl implements PassService {
     }
 
 
+
     // Método llamado desde el controlador REST
     @Transactional
     public void startExchange(Long passId, String freebieId) {
