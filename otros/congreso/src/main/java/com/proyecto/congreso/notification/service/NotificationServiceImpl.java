@@ -1,7 +1,7 @@
 package com.proyecto.congreso.notification.service;
 
-import com.proyecto.congreso.shared.eventos.ParticipantCreatedEvent;
-import com.proyecto.congreso.shared.eventos.PassAdquiredEvent;
+import com.proyecto.congreso.participantes.events.ParticipantCreatedEvent;
+import com.proyecto.congreso.pases.events.PassAdquiredEvent;
 import com.proyecto.congreso.notification.model.Notification;
 import com.proyecto.congreso.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;

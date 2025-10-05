@@ -23,11 +23,11 @@ class ModulithTest {
         modules.forEach(System.out::println);
     }
 
-//    @Test
-//    void verifyCyclicDependencies() {
-//        // Falla si hay dependencias cíclicas
-//        modules.verify();
-//    }
+    @Test
+    void verifyCyclicDependencies() {
+        // Falla si hay dependencias cíclicas
+        modules.verify();
+    }
 
     @Test
     void documentModules() throws Exception {
@@ -38,20 +38,11 @@ class ModulithTest {
             .writeModulesAsPlantUml();
     }
 
-//    @Test
-//    void verifyModuleStructure() {
-//        // Verificar que los módulos esperados existen
-//        modules.verify();
-//
-//        // Imprimir información de dependencias
-//        System.out.println("\n=== Estructura de Módulos ===");
-//        modules.forEach(module -> {
-//            System.out.println("\n📦 Módulo: " + module.getName());
-//            System.out.println("   Base Package: " + module.getBasePackage());
-//            System.out.println("   Dependencias:");
-//            module.getDependencies().forEach(dep ->
-//                System.out.println("   ➜ " + targetModule.getName());
-//            );
-//        });
-//    }
+    @Test
+    void generateModuleDiagram() {
+        new Documenter(modules)
+                .writeModulesAsPlantUml()
+                .writeIndividualModulesAsPlantUml();
+    }
+
 }

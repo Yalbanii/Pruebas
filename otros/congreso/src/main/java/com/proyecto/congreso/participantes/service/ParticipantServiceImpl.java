@@ -1,6 +1,6 @@
 package com.proyecto.congreso.participantes.service;
 
-import com.proyecto.congreso.shared.eventos.ParticipantCreatedEvent;
+import com.proyecto.congreso.participantes.events.ParticipantCreatedEvent;
 import com.proyecto.congreso.participantes.model.Participant;
 import com.proyecto.congreso.participantes.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;

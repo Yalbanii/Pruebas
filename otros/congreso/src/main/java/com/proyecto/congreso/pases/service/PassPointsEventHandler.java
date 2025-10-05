@@ -1,17 +1,16 @@
 package com.proyecto.congreso.pases.service;
 
-import com.proyecto.congreso.participantes.model.Participant;
-import com.proyecto.congreso.participantes.repository.ParticipantRepository;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;
-import com.proyecto.congreso.shared.eventos.AssistanceRegisteredEvent;
-import com.proyecto.congreso.shared.eventos.CertificateEvent;
-import com.proyecto.congreso.shared.eventos.ExchangeFailedEvent;
-import com.proyecto.congreso.shared.eventos.FreebieStockReservedEvent;
+import com.proyecto.congreso.points.assistance.events.AssistanceRegisteredEvent;
+import com.proyecto.congreso.pases.events.CertificateEvent;
+import com.proyecto.congreso.points.exchange.events.ExchangeFailedEvent;
+import com.proyecto.congreso.points.events.FreebieStockReservedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +22,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PassPointsEventHandler {
     private final PassRepository passRepository;
-    private final ParticipantRepository participantRepository;
     private final ApplicationEventPublisher eventPublisher;
 
 //----------- ADD POINTS -------------
 
     @EventListener
-    @Async
     @Transactional
     public void handleAssistanceRegistered(AssistanceRegisteredEvent event) {
 
@@ -76,7 +73,6 @@ public class PassPointsEventHandler {
 
     //----------- USE POINTS -------------
     @EventListener
-    @Async
     @Transactional
     public void handleStockReserved(FreebieStockReservedEvent event) {
         // Buscar la entidad Pass
@@ -118,31 +114,27 @@ public class PassPointsEventHandler {
             pass.setCertificateStatus(Pass.CertificateStatus.REACHED);
             log.info("🏆 LOGRO DESBLOQUEADO: Certificado alcanzado! Pass ID: {}, Puntos actuales: {}",
                     pass.getPassId(), newBalance);
-//            try {
-//                Participant participant = participantRepository.findById(pass.getParticipantId())
-//                        .orElseThrow(() -> new IllegalStateException(
-//                                "Participante no encontrado: " + pass.getParticipantId()));
+            try {
+                Pass passRev = passRepository.findById(pass.getParticipantId())
+                        .orElseThrow(() -> new IllegalStateException(
+                                "Participante no encontrado: " + pass.getParticipantId()));
 
-            // Publicar evento de certificado alcanzado
-//                CertificateEvent certificateEvent = new CertificateEvent(
-//                        pass.getPassId(),
-//                        participant.getParticipantId(),
-//                        participant.getName() + " " + participant.getLastName(),
-//                        participant.getEmail(),
-//                        newBalance
-//                );
-//
-//                eventPublisher.publishEvent(certificateEvent);
-//
-//                log.info("📢 Evento CertificateAchievedEvent publicado: Pass={}, Participante={}",
-//                        pass.getPassId(), participant.getEmail());
-//
-//            } catch (Exception e) {
-//                log.error("❌ Error al publicar evento de certificado para Pass: {}",
-//                        pass.getPassId(), e);
-//            }
-//        }
-//
+                //Publicar evento de certificado alcanzado
+                CertificateEvent certificateEvent = new CertificateEvent(
+                        pass.getPassId()
+                );
+
+                eventPublisher.publishEvent(certificateEvent);
+
+                log.info("📢 Evento CertificateAchievedEvent publicado: Pass={}, Participante={}",
+                        pass.getPassId(), pass.getParticipantId());
+
+            } catch (Exception e) {
+                log.error("❌ Error al publicar evento de certificado para Pass: {}",
+                        pass.getPassId(), e);
+            }
+        }
+
 
             if (oldBalance < pass.getPointsSpecialAccess() &&
                     newBalance >= pass.getPointsSpecialAccess()) {
@@ -155,4 +147,3 @@ public class PassPointsEventHandler {
 
 
     }
-}

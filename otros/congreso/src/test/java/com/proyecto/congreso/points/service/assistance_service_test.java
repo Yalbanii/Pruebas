@@ -1,16 +1,14 @@
 package com.proyecto.congreso.points.service;
 
-import com.proyecto.congreso.points.dto.AssistanceResponse;
-import com.proyecto.congreso.points.model.Asistencia;
-import com.proyecto.congreso.points.model.Conferencia;
-import com.proyecto.congreso.points.repository.AsistenciaRepository;
-import com.proyecto.congreso.points.repository.ConferenceRepository;
-import com.proyecto.congreso.shared.eventos.AssistanceRegisteredEvent;
+import com.proyecto.congreso.points.assistance.model.Asistencia;
+import com.proyecto.congreso.points.assistance.service.AssistanceService;
+import com.proyecto.congreso.points.calculator.model.Conferencia;
+import com.proyecto.congreso.points.assistance.repository.AsistenciaRepository;
+import com.proyecto.congreso.points.calculator.repository.ConferenceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

@@ -1,7 +1,7 @@
 package com.proyecto.congreso.notification.service;
 
-import com.proyecto.congreso.shared.eventos.AssistanceRegisteredEvent;
-import com.proyecto.congreso.shared.eventos.FreebieExchangeEvent;
+import com.proyecto.congreso.points.assistance.events.AssistanceRegisteredEvent;
+import com.proyecto.congreso.points.events.FreebieExchangeEvent;
 import com.proyecto.congreso.notification.model.MovementPointsLog;
 import com.proyecto.congreso.notification.repository.MovementPointsLogRepository;
 import lombok.RequiredArgsConstructor;

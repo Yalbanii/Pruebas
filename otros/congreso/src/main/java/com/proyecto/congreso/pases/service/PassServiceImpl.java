@@ -1,22 +1,15 @@
 package com.proyecto.congreso.pases.service;
 
-import com.proyecto.congreso.shared.eventos.ExchangeFailedEvent;
-import com.proyecto.congreso.shared.eventos.ExchangeRequestedEvent;
-import com.proyecto.congreso.shared.eventos.FreebieStockReservedEvent;
-import com.proyecto.congreso.shared.eventos.PassAdquiredEvent;
-import com.proyecto.congreso.participantes.model.Participant;
-import com.proyecto.congreso.participantes.repository.ParticipantRepository;
+import com.proyecto.congreso.points.exchange.events.ExchangeRequestedEvent;
+import com.proyecto.congreso.pases.events.PassAdquiredEvent;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -28,7 +21,6 @@ public class PassServiceImpl implements PassService {
 
 
     private final PassRepository passRepository;
-    private final ParticipantRepository participantRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final Random random = new Random();
 
@@ -37,13 +29,8 @@ public class PassServiceImpl implements PassService {
         log.debug("Creating Pass for Participant: {}", pass.getParticipantId());
 
         // Validar que el Participante existe
-        Participant participant = participantRepository.findById(pass.getParticipantId())
+        Pass passParticipant = passRepository.findById(pass.getParticipantId())
                 .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + pass.getParticipantId()));
-
-        // Validar que el Participante esté activo
-        if (participant.getStatus() != Participant.ParticipantStatus.ACTIVE) {
-            throw new IllegalArgumentException("Participant is not active");
-        }
 
         // Establecer estado inicial
         pass.setStatus(Pass.PassStatus.ACTIVE);
@@ -62,14 +49,7 @@ public class PassServiceImpl implements PassService {
         log.info("Pass created successfully: {}", savedPass.getPassId());
 
         // Publicar evento
-        PassAdquiredEvent event = new PassAdquiredEvent(
-                savedPass.getPassId(),
-                savedPass.getPassType().toString(),
-                savedPass.getPointsBalance(),
-                participant.getParticipantId(),
-                participant.getEmail(),
-                LocalDateTime.now()
-        );
+        PassAdquiredEvent event = new PassAdquiredEvent();
         eventPublisher.publishEvent(event);
         log.debug("PassAdquiredEvent published for pass ID: {}", savedPass.getPassId());
 

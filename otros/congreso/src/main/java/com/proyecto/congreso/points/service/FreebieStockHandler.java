@@ -1,14 +1,15 @@
 package com.proyecto.congreso.points.service;
 
-import com.proyecto.congreso.shared.eventos.ExchangeFailedEvent;
-import com.proyecto.congreso.shared.eventos.ExchangeRequestedEvent;
-import com.proyecto.congreso.shared.eventos.FreebieStockReservedEvent;
-import com.proyecto.congreso.points.model.Freebies;
-import com.proyecto.congreso.points.repository.FreebieRepository;
+import com.proyecto.congreso.points.exchange.events.ExchangeFailedEvent;
+import com.proyecto.congreso.points.exchange.events.ExchangeRequestedEvent;
+import com.proyecto.congreso.points.events.FreebieStockReservedEvent;
+import com.proyecto.congreso.points.calculator.model.Freebies;
+import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Usa la de Spring
