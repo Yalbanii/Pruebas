@@ -1,48 +1,48 @@
 package com.proyecto.congreso.asistencia.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Entity
 @Document(collection = "conferencias")
 public class Conferencia {
     @Id
-    private Long conferenciaId;
+    private String conferenciaId;
 
-    @Column(name = "DIA")
+    @Field(name = "DIA")
     private String dia;
 
-    @Column(name = "FECHA")
-    private Long fecha;
+    @Field(name = "FECHA")
+    private String fecha;
 
-    @Column(name = "HORA_INICIO")
-    private Long horaInicio;
+    @Field(name = "HORA_INICIO")
+    private String horaInicio;
 
-    @Column(name = "HORA_FIN")
-    private Long horaFin;
+    @Field(name = "HORA_FIN")
+    private String horaFin;
 
-    @Column(name = "DURACION")
-    private Long duracion;
+    @Field(name = "DURACION")
+    private String duracion;
 
-    @Column(name = "SEDE")
+    @Field(name = "SEDE")
     private String sede;
 
-    @Column(name = "TIPO")
+    @Field(name = "TIPO")
     private String tipo;
 
-    @Column(name = "TITULO")
+    @Field(name = "TITULO")
     private String titulo;
 
-    @Column(name = "PONENTE")
+    @Field(name = "PONENTE")
     private String ponente;
 
-    @Column(name = "PUNTOS")
+    @Field(name = "PUNTOS")
     private Integer puntos;
 }
 

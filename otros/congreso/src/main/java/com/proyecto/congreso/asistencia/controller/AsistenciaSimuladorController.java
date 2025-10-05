@@ -49,7 +49,7 @@ public class AsistenciaSimuladorController {
     @GetMapping("/conferencia/{conferenciaId}")
     @Operation(summary = "Obtener lista de asistentes a una conferencia")
     public ResponseEntity<List<AssistanceResponse>> getAsistenciasByConferencia(
-            @PathVariable Long conferenciaId) {
+            @PathVariable String conferenciaId) {
         List<AssistanceResponse> asistencias = assistanceService.getAsistenciasByConferencia(conferenciaId);
         return ResponseEntity.ok(asistencias);
     }

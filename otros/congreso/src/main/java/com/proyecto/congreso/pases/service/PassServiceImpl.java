@@ -197,7 +197,7 @@ public class PassServiceImpl implements PassService {
 
     // Método llamado desde el controlador REST
     @Transactional
-    public void startExchange(Long passId, Long freebieId) {
+    public void startExchange(Long passId, String freebieId) {
         // Validación básica, ej: Pass existe.
         eventPublisher.publishEvent(new ExchangeRequestedEvent(passId, freebieId));
     }

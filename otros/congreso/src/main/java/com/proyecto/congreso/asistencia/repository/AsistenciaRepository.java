@@ -15,10 +15,10 @@ public interface AsistenciaRepository  extends MongoRepository<Asistencia, Strin
     List<Asistencia> findByPassId(Long passId);
 
     // Buscar asistentes a una conferencia específica
-    List<Asistencia> findByConferenciaId(Long conferenciaId);
+    List<Asistencia> findByConferenciaId(String conferenciaId);
 
     // Verificar si ya existe asistencia (evitar duplicados)
-    boolean existsByPassIdAndConferenciaId(Long passId, Long conferenciaId);
+    boolean existsByPassIdAndConferenciaId(Long passId, String conferenciaId);
 
     // Obtener asistencias por participante
     List<Asistencia> findByParticipantId(Long participantId);

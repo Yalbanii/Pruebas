@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FreebiePointsData {
 
-    private Long freebieId;
+    private String freebieId;
     private String articulo;
     private String descripcion;
     private Integer stockInicial;

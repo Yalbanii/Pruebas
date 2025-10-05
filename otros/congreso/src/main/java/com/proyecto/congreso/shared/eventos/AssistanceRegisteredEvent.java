@@ -15,46 +15,42 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class AssistanceRegisteredEvent {
-    // Tipo de movimiento: ADD, USE, etc.
-    private String movementType;
 
-    // ID o título de la conferencia origen
-    private String sourceConferenceId;
-
-    // ID del participante objetivo
-    private Long targetParticipantId;
-
-    // ID del Pass que recibirá los puntos
+    /**
+     * ID del Pass que recibirá los puntos
+     */
     private Long passId;
 
-    // Cantidad de puntos a agregar
+    /**
+     * ID de la conferencia a la que asistió
+     */
+    private String conferenciaId;
+
+    /**
+     * Título de la conferencia (para logs)
+     */
+    private String tituloConferencia;
+
+    /**
+     * Cantidad de puntos a sumar
+     */
     private Integer amountPoints;
 
-    // Balance de puntos después de la operación (calculado por el listener)
-    private Integer pointsAfter;
-
-    // Timestamp del evento
+    /**
+     * Timestamp del evento
+     */
     private LocalDateTime timestamp;
 
-    public AssistanceRegisteredEvent(Long passId, Long conferenciaId, String titulo, Integer puntos) {
+    /**
+     * Constructor simplificado que establece el timestamp automáticamente
+     */
+    public AssistanceRegisteredEvent(Long passId, String conferenciaId,
+                                     String tituloConferencia, Integer amountPoints) {
+        this.passId = passId;
+        this.conferenciaId = conferenciaId;
+        this.tituloConferencia = tituloConferencia;
+        this.amountPoints = amountPoints;
+        this.timestamp = LocalDateTime.now();
     }
 
-
-    /*
-     * Constructor simplificado para el caso más común:
-     * Solo se necesita el passId y los puntos a agregar.
-     * El resto se calcula en el handler.
-     */
-//    public static AssistanceRegisteredEvent forAttendance(Long passId, Long participantId,
-//                                                          Long conferenceId, String conferenciaTitle,
-//                                                          Integer points) {
-//        return AssistanceRegisteredEvent.builder()
-//                .passId(passId)
-//                .targetParticipantId(participantId)
-//                .sourceConferenceId(conferenceId.toString())
-//                .amountPoints(points)
-//                .movementType("ATTENDANCE")
-//                .timestamp(LocalDateTime.now())
-//                .build();
-//    }
 }

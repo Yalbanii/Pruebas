@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConferencePointsData {
-    private Long conferenciaId;
+    private String conferenciaId;
     private String dia;
     private String fecha;
     private String horaInicio;

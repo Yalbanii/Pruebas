@@ -1,36 +1,30 @@
 package com.proyecto.congreso.asistencia.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Document(collection = "freebies")
 public class Freebies {
     @Id
-    @Column(name = "ID_FREEBIE")
-    private String id;
+    private String freebieId;  // MongoDB genera IDs de tipo String
 
-    private Long freebieId;
-
-    @Column(name = "ARTICULO")
+    @Field("articulo")
     private String articulo;
 
-    @Column(name = "DESCRIPCION")
+    @Field("descripcion")
     private String descripcion;
 
-    @Column(name = "STOCK_INICIAL")
+    @Field("stock_inicial")
     private Integer stockInicial;
 
-    @Column(name = "COSTO")
+    @Field("costo")
     private Integer costo;
 
-    @Column(name = "ACTUAL")
+    @Field("stock_actual")
     private Integer stockActual;
-
 }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class AssistanceResponse {  private String id;
     private Long passId;
     private Long participantId;
-    private Long conferenciaId;
+    private String conferenciaId;
     private String tituloConferencia;
     private Integer puntosOtorgados;
     private LocalDateTime fechaAsistencia;

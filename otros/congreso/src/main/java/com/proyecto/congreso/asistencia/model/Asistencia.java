@@ -21,13 +21,13 @@ public class Asistencia {
     private String id;
     private Long passId;
     private Long participantId;
-    private Long conferenciaId;
+    private String conferenciaId;
     private String tituloConferencia;
     private Integer puntosOtorgados;
     private LocalDateTime fechaAsistencia;
     private String status; // PROCESADA, PENDIENTE, FALLIDA
 
-    public static Asistencia crear(Long passId, Long participantId, Long conferenciaId,
+    public static Asistencia crear(Long passId, Long participantId, String conferenciaId,
                                    String tituloConferencia, Integer puntos) {
         Asistencia asistencia = new Asistencia();
         asistencia.setPassId(passId);

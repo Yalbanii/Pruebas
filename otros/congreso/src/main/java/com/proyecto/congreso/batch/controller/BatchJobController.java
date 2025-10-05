@@ -30,12 +30,12 @@ public class BatchJobController {
 
     private final JobLauncher jobLauncher;
 
-    @Qualifier("pointsJob")  //Especificar el Job correcto
-    private final Job pointsJob;
+    @Qualifier("processAssistancePointsJob")
+    private final Job processAssistancePointsJob;
 
-    @PostMapping("/points")
-    public ResponseEntity<Map<String, Object>> runPointsJob() {
-        log.info("🚀 Manual trigger: Points Job");
+    @PostMapping("/process-assistances")
+    public ResponseEntity<Map<String, Object>> runAssistancePointsJob() {
+        log.info("🚀 Manual trigger: Process Assistance Points Job");
 
         try {
             // Parámetros únicos para cada ejecución
@@ -44,20 +44,21 @@ public class BatchJobController {
                     .addLong("time", System.currentTimeMillis())
                     .toJobParameters();
 
-            jobLauncher.run(pointsJob, jobParameters);
+            jobLauncher.run(processAssistancePointsJob, jobParameters);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Points job ejecutado exitosamente");
+            response.put("message", "Assistance points job ejecutado exitosamente");
             response.put("timestamp", LocalDateTime.now());
-            response.put("status", "RUNNING");
+            response.put("status", "STARTED");
+            response.put("description", "Procesando asistencias pendientes y sumando puntos");
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            log.error("❌ Error ejecutando Points Job", e);
+            log.error("❌ Error ejecutando Assistance Points Job", e);
 
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Failed to execute points job");
+            errorResponse.put("error", "Failed to execute assistance points job");
             errorResponse.put("message", e.getMessage());
             errorResponse.put("timestamp", LocalDateTime.now());
 

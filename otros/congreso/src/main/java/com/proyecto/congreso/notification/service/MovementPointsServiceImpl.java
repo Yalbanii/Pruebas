@@ -116,10 +116,8 @@ public class MovementPointsServiceImpl implements MovementPointsLogService{
                 .passId(event.getPassId())
                 .movementType("ADD")
                 .balancePoints(event.getAmountPoints())
-                .points(event.getPointsAfter())
                 .timestamp(event.getTimestamp())
-                .description(String.format("%s movement of %s", event.getMovementType(), event.getAmountPoints()))
-                .participantId(event.getTargetParticipantId())
+                .description(String.format("%s movement add you points: %s", event.getAmountPoints()))
                 .status("SUCCESS")
                 .build();
 

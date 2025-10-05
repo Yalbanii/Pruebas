@@ -9,10 +9,9 @@ import com.proyecto.congreso.shared.eventos.AssistanceRegisteredEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,20 +35,23 @@ public class AssistanceService {
     private final AsistenciaRepository asistenciaRepository;
     private final ConferenceRepository conferenceRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final RestTemplate restTemplate;
+
     /**
      * Marca la asistencia a una conferencia.
-     /**
-     * ✅ FLUJO CORRECTO:
+     *
+     * FLUJO CORRECTO:
      * 1. Valida que la conferencia existe (MongoDB)
-     * 2. Verifica duplicados
-     * 3. Registra asistencia en MongoDB
-     * 4. Publica evento para que el módulo 'pases' sume puntos
+     * 2. Obtiene participantId del Pass (API REST)
+     * 3. Verifica duplicados
+     * 4. Registra asistencia en MongoDB
+     * 5. Publica evento para que el módulo 'pases' sume puntos
+     *
      * Este método NO suma puntos directamente, solo publica el evento.
      * La suma de puntos la realiza PassPointsEventHandler de forma asíncrona.
      */
-
     @Transactional
-    public AssistanceResponse marcarAsistencia(Long passId, Long conferenciaId) {
+    public AssistanceResponse marcarAsistencia(Long passId, String conferenciaId) {
         log.info("📋 Marcando asistencia: Pass={}, Conferencia={}", passId, conferenciaId);
 
         // 1. Validar que la conferencia existe
@@ -59,7 +61,10 @@ public class AssistanceService {
                     return new IllegalArgumentException("Conferencia no encontrada: " + conferenciaId);
                 });
 
-        // 2. Verificar duplicados
+        // 2. Obtener participantId del Pass mediante API REST
+        Long participantId = getParticipantIdFromPass(passId);
+
+        // 3. Verificar duplicados
         if (asistenciaRepository.existsByPassIdAndConferenciaId(passId, conferenciaId)) {
             log.warn("⚠️ Asistencia duplicada: Pass={}, Conferencia={}", passId, conferenciaId);
             throw new IllegalArgumentException(
@@ -67,10 +72,10 @@ public class AssistanceService {
             );
         }
 
-        // 3. Crear registro de asistencia en MongoDB
-        // NOTA: No conocemos participantId aquí, el módulo pases lo resolverá
+        // 4. Crear registro de asistencia en MongoDB
         Asistencia asistencia = new Asistencia();
         asistencia.setPassId(passId);
+        asistencia.setParticipantId(participantId);  // ✅ AHORA SÍ SE GUARDA
         asistencia.setConferenciaId(conferenciaId);
         asistencia.setTituloConferencia(conferencia.getTitulo());
         asistencia.setPuntosOtorgados(conferencia.getPuntos());
@@ -78,9 +83,10 @@ public class AssistanceService {
         asistencia.setStatus("PROCESADA");
 
         asistencia = asistenciaRepository.save(asistencia);
-        log.info("✅ Asistencia registrada en MongoDB: ID={}", asistencia.getId());
+        log.info("✅ Asistencia registrada en MongoDB: ID={}, ParticipantId={}",
+                asistencia.getId(), participantId);
 
-        // 4. Publicar evento para que el módulo 'pases' sume puntos
+        // 5. Publicar evento para que el módulo 'pases' sume puntos
         AssistanceRegisteredEvent event = new AssistanceRegisteredEvent(
                 passId,
                 conferenciaId,
@@ -93,6 +99,36 @@ public class AssistanceService {
                 passId, conferencia.getPuntos());
 
         return AssistanceResponse.fromEntity(asistencia);
+    }
+
+    /**
+     * Obtiene el participantId asociado a un Pass mediante llamada REST.
+     *
+     * NOTA: Usamos REST en lugar de inyectar PassRepository para mantener
+     * el bajo acoplamiento entre módulos. Alternativa: Podríamos incluir
+     * el participantId en el request, pero eso requeriría que el cliente
+     * lo conozca, lo cual no es ideal.
+     */
+    private Long getParticipantIdFromPass(Long passId) {
+        try {
+            String url = "http://localhost:8080/api/pases/" + passId;
+
+            // Usar una clase interna simple para mapear la respuesta
+            PassResponse response = restTemplate.getForObject(url, PassResponse.class);
+
+            if (response == null || response.getParticipantId() == null) {
+                log.error("❌ No se pudo obtener participantId del Pass: {}", passId);
+                throw new IllegalArgumentException("Pass no encontrado o sin participantId: " + passId);
+            }
+
+            log.debug("✅ ParticipantId obtenido: {} para Pass: {}",
+                    response.getParticipantId(), passId);
+            return response.getParticipantId();
+
+        } catch (Exception e) {
+            log.error("❌ Error al consultar Pass: {}", passId, e);
+            throw new IllegalArgumentException("Error al validar Pass: " + passId, e);
+        }
     }
 
     /**
@@ -110,7 +146,7 @@ public class AssistanceService {
      * Obtiene la lista de asistentes a una conferencia.
      */
     @Transactional(readOnly = true)
-    public List<AssistanceResponse> getAsistenciasByConferencia(Long conferenciaId) {
+    public List<AssistanceResponse> getAsistenciasByConferencia(String conferenciaId) {
         log.debug("🔍 Obteniendo asistentes a la conferencia: {}", conferenciaId);
         return asistenciaRepository.findByConferenciaId(conferenciaId).stream()
                 .map(AssistanceResponse::fromEntity)
@@ -138,5 +174,20 @@ public class AssistanceService {
     public long countAsistenciasByPass(Long passId) {
         log.debug("🔍 Contando asistencias del Pass: {}", passId);
         return asistenciaRepository.countByPassId(passId);
+    }
+
+    /**
+     * Clase interna para mapear la respuesta del Pass API.
+     * Solo incluye los campos que necesitamos.
+     */
+    private static class PassResponse {
+        private Long passId;
+        private Long participantId;
+
+        public Long getPassId() { return passId; }
+        public void setPassId(Long passId) { this.passId = passId; }
+
+        public Long getParticipantId() { return participantId; }
+        public void setParticipantId(Long participantId) { this.participantId = participantId; }
     }
 }

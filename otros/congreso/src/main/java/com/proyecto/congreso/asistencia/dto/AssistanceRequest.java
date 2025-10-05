@@ -14,6 +14,6 @@ public class AssistanceRequest {
     private Long passId;
 
     @NotNull(message = "Conferencia ID es requerido")
-    private Long conferenciaId;
+    private String conferenciaId;
 
 }

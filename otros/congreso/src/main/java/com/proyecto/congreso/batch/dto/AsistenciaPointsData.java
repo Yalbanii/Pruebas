@@ -40,7 +40,7 @@ public class AsistenciaPointsData implements Serializable {
     /**
      * ID de la conferencia a la que asistió
      */
-    private Long conferenciaId;
+    private String conferenciaId;
 
     /**
      * Puntos que otorga la conferencia (ya vienen de la asistencia)
@@ -60,7 +60,7 @@ public class AsistenciaPointsData implements Serializable {
     /**
      * Constructor de conveniencia para el Processor
      */
-    public AsistenciaPointsData(String asistenciaId, Long passId, Long conferenciaId,
+    public AsistenciaPointsData(String asistenciaId, Long passId, String conferenciaId,
                                 Integer pointsAwarded, Integer currentBalance) {
         this.asistenciaId = asistenciaId;
         this.passId = passId;
