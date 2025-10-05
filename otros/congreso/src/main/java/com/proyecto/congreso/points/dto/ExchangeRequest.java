@@ -5,14 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO para solicitar el intercambio de puntos por un Freebie.
- * Similar a AssistanceRequest pero para el flujo de descuento de puntos.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FreebieExchangeRequest {
+public class ExchangeRequest {
 
 
     @NotNull(message = "Pass ID es requerido")

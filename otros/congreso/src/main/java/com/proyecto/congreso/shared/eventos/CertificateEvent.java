@@ -9,4 +9,5 @@ public record CertificateEvent(Long passId){
     private static String email;
     private static Long certificateId;
     private static LocalDateTime createdAt;
+
 }

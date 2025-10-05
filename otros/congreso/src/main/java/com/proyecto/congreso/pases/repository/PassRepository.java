@@ -15,7 +15,7 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
     // Verificar si existe un número de Pase
     boolean existsByPassId(Long passId);
 
-    // Buscar cuentas por participantId
+    // Buscar inscripciones por participantId
     List<Pass> findByParticipantId(Long participantId);
 
     // Buscar Pases por estado

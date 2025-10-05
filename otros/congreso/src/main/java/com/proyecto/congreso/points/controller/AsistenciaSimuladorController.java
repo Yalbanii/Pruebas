@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/*
- * Controlador para gestionar asistencias a conferencias.
- * Este módulo es independiente y se comunica con otros módulos mediante eventos.
- */
 @RestController
 @RequestMapping("/api/asistencias")
 @RequiredArgsConstructor

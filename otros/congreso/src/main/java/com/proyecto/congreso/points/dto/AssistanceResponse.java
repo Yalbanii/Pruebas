@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssistanceResponse {  private String id;
+public class AssistanceResponse {
+    private String id;
     private Long passId;
     private Long participantId;
     private String conferenciaId;

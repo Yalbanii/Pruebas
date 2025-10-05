@@ -1,10 +1,16 @@
 package com.proyecto.congreso.pases.service;
 
+import com.proyecto.congreso.participantes.model.Participant;
+import com.proyecto.congreso.participantes.repository.ParticipantRepository;
 import com.proyecto.congreso.pases.model.Pass;
 import com.proyecto.congreso.pases.repository.PassRepository;
 import com.proyecto.congreso.shared.eventos.AssistanceRegisteredEvent;
+import com.proyecto.congreso.shared.eventos.CertificateEvent;
+import com.proyecto.congreso.shared.eventos.ExchangeFailedEvent;
+import com.proyecto.congreso.shared.eventos.FreebieStockReservedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -12,35 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-/**
- * Handler que escucha eventos de asistencias registradas y actualiza los puntos del Pass.
- *
- * FLUJO:
- * 1. Módulo 'asistencia' publica AssistanceRegisteredEvent
- * 2. Este handler lo escucha de forma asíncrona
- * 3. Busca el Pass en MySQL
- * 4. Suma los puntos
- * 5. Verifica logros (certificado, acceso especial)
- * 6. Guarda en MySQL
- *
- * PRINCIPIOS:
- * - Procesamiento asíncrono (@Async)
- * - Transaccional para garantizar consistencia
- * - No conoce el módulo 'asistencia'
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class PassPointsEventHandler {
     private final PassRepository passRepository;
+    private final ParticipantRepository participantRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
+//----------- ADD POINTS -------------
 
     @EventListener
     @Async
     @Transactional
     public void handleAssistanceRegistered(AssistanceRegisteredEvent event) {
 
-        log.info("🎧 Evento recibido: AssistanceRegisteredEvent - Pass={}, Puntos={}",
+        log.info(" Evento recibido: AssistanceRegisteredEvent - Pass={}, Puntos={}",
                 event.getPassId(), event.getAmountPoints());
 
         try {
@@ -53,7 +46,7 @@ public class PassPointsEventHandler {
 
             // 2. Validar que el Pass esté activo
             if (pass.getStatus() != Pass.PassStatus.ACTIVE) {
-                log.warn("⚠️ Pass {} no está activo. Estado: {}. No se suman puntos.",
+                log.warn("Ese Pase {} no está activo. Estado: {}. No se suman puntos.",
                         pass.getPassId(), pass.getStatus());
                 return;
             }
@@ -73,36 +66,93 @@ public class PassPointsEventHandler {
             // 6. Guardar en MySQL
             passRepository.save(pass);
 
-            log.info("✅ Puntos sumados exitosamente: Pass={}, Puntos={}, Balance: {} → {}",
+            log.info("✅ Puntos sumados exitosamente: Pass={}, Puntos={}, Balance of Points: {} → {}",
                     pass.getPassId(), event.getAmountPoints(), balanceAnterior, nuevoBalance);
 
         } catch (Exception e) {
             log.error("❌ Error procesando AssistanceRegisteredEvent: {}", event, e);
-            // En un sistema real, aquí podrías publicar un evento de compensación
-            // o marcar la asistencia como "FALLIDA" para reprocesarla con el batch job
         }
     }
 
-    /**
-     * Verifica si el Pass alcanzó algún logro al sumar puntos.
-     */
+    //----------- USE POINTS -------------
+    @EventListener
+    @Async
+    @Transactional
+    public void handleStockReserved(FreebieStockReservedEvent event) {
+        // Buscar la entidad Pass
+        passRepository.findById(event.getPassId()).ifPresentOrElse(
+                pass -> {
+                    Integer costo = event.getCosto();
+
+                    // 2. Lógica de Movimiento: Verificar y Descontar Puntos
+                    if (pass.getPointsBalance() >= costo) {
+                        pass.setPointsBalance(pass.getPointsBalance() - costo);
+                        passRepository.save(pass);
+                        System.out.println("Puntos descontados para Pass ID: " + pass.getPassId());
+
+                    } else {
+                        // 3. FALLO: Puntos insuficientes. Publicar evento de fallo para que el PointsServiceImpl revierta la reserva de stock.
+                        eventPublisher.publishEvent(new ExchangeFailedEvent(
+                                pass.getPassId(),
+                                "Puntos insuficientes para obtener el Freebie ID " + event.getFreebieId()
+                        ));
+                    }
+                },
+                () -> eventPublisher.publishEvent(new ExchangeFailedEvent(
+                        event.getPassId(),
+                        "El Pass de usuario no fue encontrado para descontar puntos."
+                ))
+        );
+
+    }
+
+
+    //----------- LOGROS DESBLOQUEADOS -------------
+
+
     private void checkAchievements(Pass pass, Integer oldBalance, Integer newBalance) {
         // Verificar Certificado (25 puntos)
         if (oldBalance < pass.getPointsCertificate() &&
                 newBalance >= pass.getPointsCertificate()) {
 
             pass.setCertificateStatus(Pass.CertificateStatus.REACHED);
-            log.info("🏆 ¡Certificado alcanzado! Pass ID: {}, Puntos: {}",
+            log.info("🏆 LOGRO DESBLOQUEADO: Certificado alcanzado! Pass ID: {}, Puntos actuales: {}",
                     pass.getPassId(), newBalance);
+//            try {
+//                Participant participant = participantRepository.findById(pass.getParticipantId())
+//                        .orElseThrow(() -> new IllegalStateException(
+//                                "Participante no encontrado: " + pass.getParticipantId()));
+
+            // Publicar evento de certificado alcanzado
+//                CertificateEvent certificateEvent = new CertificateEvent(
+//                        pass.getPassId(),
+//                        participant.getParticipantId(),
+//                        participant.getName() + " " + participant.getLastName(),
+//                        participant.getEmail(),
+//                        newBalance
+//                );
+//
+//                eventPublisher.publishEvent(certificateEvent);
+//
+//                log.info("📢 Evento CertificateAchievedEvent publicado: Pass={}, Participante={}",
+//                        pass.getPassId(), participant.getEmail());
+//
+//            } catch (Exception e) {
+//                log.error("❌ Error al publicar evento de certificado para Pass: {}",
+//                        pass.getPassId(), e);
+//            }
+//        }
+//
+
+            if (oldBalance < pass.getPointsSpecialAccess() &&
+                    newBalance >= pass.getPointsSpecialAccess()) {
+
+                pass.setAccessStatus(Pass.AccessStatus.REACHED);
+                log.info("🎉 LOGRO DESBLOQUEADO: Acceso Especial alcanzado! Pass ID: {}, Puntos actuales: {}",
+                        pass.getPassId(), newBalance);
+            }
         }
 
-        // Verificar Acceso Especial (30 puntos)
-        if (oldBalance < pass.getPointsSpecialAccess() &&
-                newBalance >= pass.getPointsSpecialAccess()) {
 
-            pass.setAccessStatus(Pass.AccessStatus.REACHED);
-            log.info("🎉 ¡Acceso Especial alcanzado! Pass ID: {}, Puntos: {}",
-                    pass.getPassId(), newBalance);
-        }
     }
 }

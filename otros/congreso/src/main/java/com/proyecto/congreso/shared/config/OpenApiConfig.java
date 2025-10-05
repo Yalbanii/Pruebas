@@ -19,8 +19,14 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Congreso Sistema Interactivo API")
                         .version("1.0")
-                        .description("API REST para el Congreso Sistema Interactivo")
-                        .contact(new Contact()
+                        .description("API REST para el Sistema de Congreso Interactivo\n\n" +
+                                "**Módulos disponibles:**\n" +
+                                "- Participantes: Gestión de participantes del congreso\n" +
+                                "- Pases: Gestión de pases y puntos\n" +
+                                "- Asistencias: Registro de asistencia a conferencias (suma puntos)\n" +
+                                "- Freebies: Gestión de artículos e intercambio por puntos (resta puntos)\n" +
+                                "- Certificados: Consulta de certificados alcanzados (25 puntos)\n" +
+                                "- Batch Jobs: Procesamiento por lotes de asistencias pendientes")                        .contact(new Contact()
                                 .name("Congreso")
                                 .email("support@congreso.com")));
     }
@@ -33,8 +39,36 @@ public class OpenApiConfig {
                 .packagesToScan(
                         "com.proyecto.congreso.pases.controller",
                         "com.proyecto.congreso.participantes.controller",
-                         "com.proyecto.congreso.points.controller"
+                         "com.proyecto.congreso.points.controller",
+                        "com.proyecto.congreso.notification.controller",
+                        "com.proyecto.congreso.batch.controller"
                 )
                 .build();
     }
+//    @Bean
+//    public GroupedOpenApi pasesApi() {
+//        return GroupedOpenApi.builder()
+//                .group("pases")
+//                .displayName("Módulo de Pases")
+//                .packagesToScan("com.proyecto.congreso.pases.controller")
+//                .build();
+//    }
+//
+//    @Bean
+//    public GroupedOpenApi asistenciasApi() {
+//        return GroupedOpenApi.builder()
+//                .group("asistencias")
+//                .displayName("Módulo de Asistencias")
+//                .packagesToScan("com.proyecto.congreso.points.controller")
+//                .build();
+//    }
+//
+//    @Bean
+//    public GroupedOpenApi certificadosApi() {
+//        return GroupedOpenApi.builder()
+//                .group("participantes")
+//                .displayName("Módulo de Participantes")
+//                .packagesToScan("com.proyecto.congreso.pases.controller")
+//                .build();
+//    }
 }

@@ -16,7 +16,6 @@ public interface PassService {
     Pass updatePass(Long passId, Pass pass);
     void deletePass(Long passId);
 
-    // Pass Insription status operations
     Pass activatePass(Long passId);
     Pass closePass(Long passId);
 

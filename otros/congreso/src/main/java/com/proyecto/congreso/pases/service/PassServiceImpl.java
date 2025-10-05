@@ -112,7 +112,6 @@ public class PassServiceImpl implements PassService {
 
         Pass existingPass = getPassById(id);
 
-        // Solo permitir actualizar ciertos campos
         existingPass.setPassType(pass.getPassType());
 
         Pass updatedPass = passRepository.save(existingPass);
@@ -195,44 +194,11 @@ public class PassServiceImpl implements PassService {
         return passRepository.existsByPassId(passId);
     }
 
+
     // Método llamado desde el controlador REST
     @Transactional
     public void startExchange(Long passId, String freebieId) {
-        // Validación básica, ej: Pass existe.
         eventPublisher.publishEvent(new ExchangeRequestedEvent(passId, freebieId));
     }
 
-    // Escucha el evento de éxito
-    @EventListener
-    @Async
-    @Transactional // IMPORTANTE: Transacción local para reducir puntos
-    public void handleStockReserved(FreebieStockReservedEvent event) {
-        // Buscar la entidad Pass
-        passRepository.findById(event.getPassId()).ifPresentOrElse(
-                pass -> {
-                    Integer costo = event.getCosto();
-
-                    // 2. Lógica de Transacción: Verificar y Descontar Puntos
-                    if (pass.getPointsBalance() >= costo) {
-                        pass.setPointsBalance(pass.getPointsBalance() - costo);
-                        passRepository.save(pass);
-                        System.out.println("Puntos descontados para Pass ID: " + pass.getPassId());
-                        // Transacción completada
-                    } else {
-                        // 3. FALLO: Puntos insuficientes. Publicar evento de fallo
-                        //    para que el PointsServiceImpl revierta la reserva de stock.
-                        eventPublisher.publishEvent(new ExchangeFailedEvent(
-                                pass.getPassId(),
-                                "Puntos insuficientes para el Freebie ID " + event.getFreebieId()
-                        ));
-                    }
-                },
-                // Si el Pass no existe se publica un fallo.
-                () -> eventPublisher.publishEvent(new ExchangeFailedEvent(
-                        event.getPassId(),
-                        "El Pass de usuario no fue encontrado para descontar puntos."
-                ))
-        );
-
-    }
 }
