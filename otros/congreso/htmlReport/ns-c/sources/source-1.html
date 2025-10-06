@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BatchJobExecutionMongoListener</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.pases.batch.listener</a>
+</div>
+
+<h1>Coverage Summary for Class: BatchJobExecutionMongoListener (com.proyecto.congreso.pases.batch.listener)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BatchJobExecutionMongoListener</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    37.9%
+  </span>
+  <span class="absValue">
+    (11/29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.pases.batch.listener;
+&nbsp;
+&nbsp;import com.proyecto.congreso.pases.batch.model.BatchJobExecutionLog;
+&nbsp;import com.proyecto.congreso.pases.batch.repository.BatchJobExecutionLogRepository;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.batch.core.JobExecution;
+&nbsp;import org.springframework.batch.core.JobExecutionListener;
+&nbsp;import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+&nbsp;import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;/**
+&nbsp; * Listener que registra la ejecución de batch jobs en MongoDB.
+&nbsp; */
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Component
+&nbsp;@RequiredArgsConstructor
+&nbsp;@ConditionalOnProperty(name = &quot;spring.batch.job.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)
+&nbsp;@ConditionalOnBean(name = &quot;mongoTemplate&quot;)
+&nbsp;public class BatchJobExecutionMongoListener implements JobExecutionListener {
+&nbsp;
+&nbsp;    private final BatchJobExecutionLogRepository logRepository;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void beforeJob(JobExecution jobExecution) {
+<b class="fc">&nbsp;        log.info(&quot;🚀 Starting batch job: {} (ID: {})&quot;,</b>
+<b class="fc">&nbsp;                jobExecution.getJobInstance().getJobName(),</b>
+<b class="fc">&nbsp;                jobExecution.getId());</b>
+&nbsp;
+<b class="fc">&nbsp;        BatchJobExecutionLog executionLog = BatchJobExecutionLog.started(</b>
+<b class="fc">&nbsp;                jobExecution.getId(),</b>
+<b class="fc">&nbsp;                jobExecution.getJobInstance().getJobName()</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        logRepository.save(executionLog);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void afterJob(JobExecution jobExecution) {
+<b class="fc">&nbsp;        BatchJobExecutionLog log = logRepository.findByJobExecutionId(jobExecution.getId());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (log == null) {</b>
+<b class="fc">&nbsp;            this.log.warn(&quot;No execution log found for job execution: {}&quot;, jobExecution.getId());</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (jobExecution.getStatus().isUnsuccessful()) {</b>
+<b class="nc">&nbsp;            String errorMessage = jobExecution.getAllFailureExceptions().stream()</b>
+<b class="nc">&nbsp;                    .map(Throwable::getMessage)</b>
+<b class="nc">&nbsp;                    .reduce((a, b) -&gt; a + &quot;; &quot; + b)</b>
+<b class="nc">&nbsp;                    .orElse(&quot;Unknown error&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            log.failed(errorMessage);</b>
+<b class="nc">&nbsp;            this.log.error(&quot;❌ Batch job failed: {} - {}&quot;, jobExecution.getJobInstance().getJobName(), errorMessage);</b>
+&nbsp;        } else {
+&nbsp;            // Get statistics from job context
+<b class="nc">&nbsp;            Integer totalPass = (Integer) jobExecution.getExecutionContext().get(&quot;totalPass&quot;);</b>
+<b class="nc">&nbsp;            Integer passWithAdd = (Integer) jobExecution.getExecutionContext().get(&quot;passWithAdd&quot;);</b>
+<b class="nc">&nbsp;            Integer passWithUse = (Integer) jobExecution.getExecutionContext().get(&quot;passWithUse&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            log.completed(</b>
+<b class="nc">&nbsp;                    totalPass != null ? totalPass : 0,</b>
+<b class="nc">&nbsp;                    passWithAdd != null ? passWithAdd : 0,</b>
+<b class="nc">&nbsp;                    passWithUse != null ? passWithUse : 0</b>
+&nbsp;                    );
+&nbsp;
+<b class="nc">&nbsp;            this.log.info(&quot;✅ Batch job completed: {} (Duration: {}ms, Pass: {}&quot;,</b>
+<b class="nc">&nbsp;                    jobExecution.getJobInstance().getJobName(),</b>
+<b class="nc">&nbsp;                    log.getDuration(),</b>
+&nbsp;                    totalPass);
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        logRepository.save(log);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

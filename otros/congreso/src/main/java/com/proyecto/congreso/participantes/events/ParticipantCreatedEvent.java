@@ -14,4 +14,5 @@ public class ParticipantCreatedEvent {
     private String fullName;
     private String email;
     private LocalDateTime createdAt;
+
 }

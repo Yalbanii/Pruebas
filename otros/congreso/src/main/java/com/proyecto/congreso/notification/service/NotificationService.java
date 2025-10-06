@@ -39,6 +39,7 @@ public interface NotificationService {
 
     long countByStatus(Notification.NotificationStatus status);
 
+
     // Notification sending operations
     void sendNotification(String notificationId);
 
@@ -46,7 +47,9 @@ public interface NotificationService {
 
     void retryFailedNotifications();
 
-    // Business operations - Account events
+
+
+    // Business operations - Pases events
     void notifyPassCreated(Long participantId, String participantEmail, Long passIdr, String passType);
 
     void notifyAdd(Long participantId, String participantEmail, Long passId, Integer puntos);
@@ -56,7 +59,7 @@ public interface NotificationService {
 
     void notifyPassClosed(Long participantId, String participantEmail, Long passId);
 
-    // Business operations - Customer events
+    // Business operations - Participantes events
     void notifyParticipantRegistered(Long participantId, String participantEmail, String participantName);
 
     void notifyParticipantUpdated(Long participantId, String participantEmail, String participantName);

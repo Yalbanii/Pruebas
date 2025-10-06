@@ -11,18 +11,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AsistenciaPointsData implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    static final long serialVersionUID = 1L;
 
-
-    //ID de la asistencia en MongoDB (para marcarla como procesada)
+    //ID de la asistencia en MongoDB
     private String asistenciaId;
-
 
      // ID del Pass en MySQL (para actualizar balance)
     private Long passId;
 
-
-    //ID de la conferencia a la que asistió
     private String conferenciaId;
 
     private Integer pointsAwarded;
@@ -31,7 +27,6 @@ public class AsistenciaPointsData implements Serializable {
     private Integer currentBalance;
 
     private Integer newBalance;
-
 
 
     public AsistenciaPointsData(String asistenciaId, Long passId, String conferenciaId,

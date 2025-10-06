@@ -1,9 +1,9 @@
 package com.proyecto.congreso.notification.service;
 
 import com.proyecto.congreso.points.assistance.events.AssistanceRegisteredEvent;
-import com.proyecto.congreso.points.events.FreebieExchangeEvent;
 import com.proyecto.congreso.notification.model.MovementPointsLog;
 import com.proyecto.congreso.notification.repository.MovementPointsLogRepository;
+import com.proyecto.congreso.points.exchange.events.ExchangeRegisteredEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
@@ -126,18 +126,16 @@ public class MovementPointsServiceImpl implements MovementPointsLogService{
 
 
     @ApplicationModuleListener
-    public void handleUsePoints(FreebieExchangeEvent event) {
-        log.debug("Use of points in FreebieExchangeEvent for Pass: {}", event.getPassId());
+    public void handleUsePoints(ExchangeRegisteredEvent event) {
+        log.debug("Use of points in ExchangeRegisteredEvent for Pass: {}", event.getPassId());
 
         MovementPointsLog log = MovementPointsLog.builder()
                 .movementId(java.util.UUID.randomUUID().toString())
                 .passId(event.getPassId())
                 .movementType("USE")
-                .balancePoints(event.getAmountPoints())
-                .points(event.getPointsAfter())
+                .balancePoints(event.getCosto())
                 .timestamp(event.getTimestamp())
-                .description(String.format("Use of points: %s", event.getAmountPoints()))
-                .participantId(event.getTargetParticipantId())
+                .description(String.format("Use of points: %s", event.getCosto()))
                 .status("SUCCESS")
                 .build();
 

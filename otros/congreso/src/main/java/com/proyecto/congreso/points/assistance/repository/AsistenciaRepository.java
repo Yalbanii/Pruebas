@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface AsistenciaRepository  extends MongoRepository<Asistencia, String> {
 
-    // Buscar todas las asistencias de un Pass
     List<Asistencia> findByPassId(Long passId);
 
     // Buscar asistentes a una conferencia específica

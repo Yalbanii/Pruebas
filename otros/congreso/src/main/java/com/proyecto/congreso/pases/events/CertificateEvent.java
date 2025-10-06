@@ -12,9 +12,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CertificateEvent {
-    private Long passId;
-    private static LocalDateTime createdAt;
 
-    public CertificateEvent(Long passId, LocalDateTime now) {
+    private Long passId;
+
+    private LocalDateTime createdAt;
+
+    public CertificateEvent(Long passId) {
+        this.passId = passId;
+        this.createdAt = LocalDateTime.now();
     }
 }

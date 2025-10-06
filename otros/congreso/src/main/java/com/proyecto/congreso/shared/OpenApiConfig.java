@@ -7,9 +7,8 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Configuración de OpenAPI/Swagger para la documentación de la API.
- */
+// Configuracion de OpenAPI/Swagger para la documentacion de la API.
+
 @Configuration
 public class OpenApiConfig {
 

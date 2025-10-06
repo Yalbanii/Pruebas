@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PointsDataLoader</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.points.calculator.config</a>
+</div>
+
+<h1>Coverage Summary for Class: PointsDataLoader (com.proyecto.congreso.points.calculator.config)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PointsDataLoader</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (65/65)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.points.calculator.config;
+&nbsp;
+&nbsp;import com.proyecto.congreso.points.calculator.dto.ConferencePointsData;
+&nbsp;import com.proyecto.congreso.points.calculator.model.FreebiePointsData;
+&nbsp;import com.proyecto.congreso.points.calculator.events.ConferenceDataImportedEvent;
+&nbsp;import com.proyecto.congreso.points.calculator.events.FreebieDataImportedEvent;
+&nbsp;import org.springframework.boot.CommandLineRunner;
+&nbsp;import org.springframework.context.ApplicationEventPublisher;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Component
+&nbsp;public class PointsDataLoader implements CommandLineRunner {
+&nbsp;
+&nbsp;    private final ApplicationEventPublisher events;
+&nbsp;
+&nbsp;    // ---------------- FREEBIES - -----------------
+&nbsp;    // Los datos del CSV como una constante en el codigo
+<b class="fc">&nbsp;    private static final List&lt;FreebiePointsData&gt; INVENTORY_DATA_FREEBIES = List.of(</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;1&quot;, &quot;Libreta Reciclada&quot;, &quot;Libreta de tapa dura con logo del congreso&quot;, 350, 10, 350),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;2&quot;, &quot;Bolígrafo Táctil&quot;, &quot;Bolígrafo con punta de goma para pantallas táctiles&quot;, 350, 5, 350),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;3&quot;, &quot;USB 32GB (Logo)&quot;, &quot;Memoria USB con logo y material del congreso&quot;, 300, 15, 300),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;4&quot;, &quot;Llavero 3D (Cerebro)&quot;, &quot;Llavero de goma con forma de cerebro o chip&quot;, 150, 7, 150),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;5&quot;, &quot;Llavero 3D (Chip)&quot;, &quot;Llavero de goma con forma de chip de IA&quot;, 150, 7, 150),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;6&quot;, &quot;Taza de Viaje&quot;, &quot;Taza térmica reutilizable para café o té&quot;, 100, 10, 100),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;7&quot;,  &quot;Stickers Set (Tecnología)&quot;, &quot;Paquete de calcomanías relacionadas con tecnología&quot;, 200, 4, 200),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;8&quot;, &quot;Stickers Set (Psicología)&quot;, &quot;Paquete de calcomanías relacionadas con psicología&quot;, 200, 4, 200),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;9&quot;, &quot;Bolsa de Tela (Tote Bag)&quot;, &quot;Bolsa reutilizable con diseño minimalista&quot;, 100, 10, 100),</b>
+<b class="fc">&nbsp;            new FreebiePointsData(&quot;10&quot;, &quot;Cuaderno de Post-its&quot;, &quot;Set de notas adhesivas personalizadas&quot;, 100, 8, 100)</b>
+&nbsp;    );
+&nbsp;
+&nbsp;    // ---------------- CONFERENCIAS + -----------------
+<b class="fc">&nbsp;    private static final List&lt;ConferencePointsData&gt; INVENTORY_DATA_CONFERENCIAS = List.of(</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;1&quot;, &quot;Lunes&quot;, &quot;01-03&quot;, &quot;09:00&quot;, &quot;10:00&quot;, &quot;1.0&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Conferencia Inaugural&quot;, &quot;La IA como herramienta de diagnóstico psicológico&quot;, &quot;Dr. Ana Pérez&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;2&quot;, &quot;Lunes&quot;, &quot;01/03&quot;, &quot;10:00&quot;, &quot;11:30&quot;, &quot;1.5&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Panel de Expertos&quot;, &quot;Ética y privacidad en la terapia online&quot;, &quot;Dra. Carlos Gómez,Mtro. Elena Ruiz&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;3&quot;, &quot;Lunes&quot;, &quot;01/03&quot;, &quot;11:30&quot;, &quot;12:00&quot;, &quot;0.5&quot;, &quot;Todas las Sedes&quot;, &quot;Receso&quot;, &quot;Pausa Café&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;4&quot;, &quot;Lunes&quot;, &quot;01/03&quot;, &quot;12:00&quot;, &quot;14:00&quot;, &quot;2.0&quot;, &quot;Sede Norte - Aula Magna&quot;, &quot;Taller&quot;, &quot;Realidad Virtual para el tratamiento de fobias&quot;, &quot;Lic. Javier Salas&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;5&quot;, &quot;Lunes&quot;, &quot;01/03&quot;, &quot;12:00&quot;, &quot;14:00&quot;, &quot;2.0&quot;, &quot;Sede Este - Sala 1&quot;, &quot;Presentación de Trabajos&quot;, &quot;Uso de Wearables en la monitorización del estrés&quot;, &quot;Msc. Laura Vega&quot;, 2),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;6&quot;, &quot;Lunes&quot;, &quot;01/03&quot;, &quot;14:00&quot;, &quot;15:00&quot;, &quot;1.0&quot;, &quot;Todas las Sedes&quot;, &quot;Almuerzo&quot;, &quot;&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;7&quot;, &quot;Lunes&quot;, &quot;01/03&quot;, &quot;15:00&quot;, &quot;16:30&quot;, &quot;1.5&quot;, &quot;Sede Oeste - Sala de Conferencias&quot;, &quot;Seminario&quot;, &quot;Neurotecnología y mejora cognitiva&quot;, &quot;Dr. Marco Polo&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;8&quot;, &quot;Martes&quot;, &quot;02/03&quot;, &quot;09:00&quot;, &quot;11:00&quot;, &quot;2.0&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Keynote Speaker&quot;, &quot;Big Data en la investigación psicológica&quot;, &quot;Dra. Sofía Torres&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;9&quot;, &quot;Martes&quot;, &quot;02/03&quot;, &quot;11:00&quot;, &quot;11:30&quot;, &quot;0.5&quot;, &quot;Todas las Sedes&quot;, &quot;Receso&quot;, &quot;Pausa Café&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;10&quot;, &quot;Martes&quot;, &quot;02/03&quot;, &quot;11:30&quot;, &quot;13:30&quot;, &quot;2.0&quot;, &quot;Sede Norte - Aula Magna&quot;, &quot;Taller&quot;, &quot;Gamificación en intervenciones psicológicas con adolescentes&quot;, &quot;Lic. Daniel Arias&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;11&quot;, &quot;Martes&quot;, &quot;02/03&quot;, &quot;11:30&quot;, &quot;13:30&quot;, &quot;2.0&quot;, &quot;Sede Este - Sala 1&quot;, &quot;Presentación de Trabajos&quot;, &quot;Psicología del consumo en plataformas digitales&quot;, &quot;Msc. Patricia Rey&quot;, 2),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;12&quot;, &quot;Martes&quot;, &quot;02/03&quot;, &quot;13:30&quot;, &quot;14:30&quot;, &quot;1.0&quot;, &quot;Todas las Sedes&quot;, &quot;Almuerzo&quot;, &quot;&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;13&quot;, &quot;Martes&quot;, &quot;02/03&quot;, &quot;14:30&quot;, &quot;16:30&quot;, &quot;2.0&quot;, &quot;Sede Oeste - Sala de Conferencias&quot;, &quot;Mesa Redonda&quot;, &quot;Ciberacoso: Impacto y Prevención Tecnológica&quot;, &quot;Diversos Especialistas&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;14&quot;, &quot;Miércoles&quot;, &quot;03/03&quot;, &quot;09:00&quot;, &quot;10:30&quot;, &quot;1.5&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Conferencia&quot;, &quot;El futuro de la salud mental digital&quot;, &quot;Dr. Juan Blanco&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;15&quot;, &quot;Miércoles&quot;, &quot;03/03&quot;, &quot;10:30&quot;, &quot;11:00&quot;, &quot;0.5&quot;, &quot;Todas las Sedes&quot;, &quot;Receso&quot;, &quot;Pausa Café&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;16&quot;, &quot;Miércoles&quot;, &quot;03/03&quot;, &quot;11:00&quot;, &quot;13:00&quot;, &quot;2.0&quot;, &quot;Sede Norte - Aula Magna&quot;, &quot;Taller&quot;, &quot;Diseño de Chatbots Terapéuticos&quot;, &quot;Ing. Miguel Ángel&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;17&quot;, &quot;Miércoles&quot;, &quot;03/03&quot;, &quot;11:00&quot;, &quot;13:00&quot;, &quot;2.0&quot;, &quot;Sede Este - Sala 1&quot;, &quot;Presentación de Trabajos&quot;, &quot;Terapia Cognitivo-Conductual asistida por apps&quot;, &quot;Msc. Carolina Solís&quot;, 2),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;18&quot;, &quot;Miércoles&quot;, &quot;03/03&quot;, &quot;13:00&quot;, &quot;14:00&quot;, &quot;1.0&quot;, &quot;Todas las Sedes&quot;, &quot;Almuerzo&quot;, &quot;&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;19&quot;, &quot;Miércoles&quot;, &quot;03/03&quot;, &quot;14:00&quot;, &quot;16:00&quot;, &quot;2.0&quot;, &quot;Sede Oeste - Sala de Conferencias&quot;, &quot;Panel&quot;, &quot;Regulación emocional a través de la Neurofeedback&quot;, &quot;Dra. Fernanda Rivas&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;20&quot;, &quot;Jueves&quot;, &quot;04/03&quot;, &quot;09:00&quot;, &quot;10:00&quot;, &quot;1.0&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Conferencia&quot;, &quot;Psicología Positiva y redes sociales&quot;, &quot;Dr. Luis Herrera&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;21&quot;, &quot;Jueves&quot;, &quot;04/03&quot;, &quot;10:00&quot;, &quot;11:30&quot;, &quot;1.5&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Panel de Expertos&quot;, &quot;Desafíos de la telepsicología en zonas rurales&quot;, &quot;Diversos Especialistas&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;22&quot;, &quot;Jueves&quot;, &quot;04/03&quot;, &quot;11:30&quot;, &quot;12:00&quot;, &quot;0.5&quot;, &quot;Todas las Sedes&quot;, &quot;Receso&quot;, &quot;Pausa Café&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;23&quot;, &quot;Jueves&quot;, &quot;04/03&quot;, &quot;12:00&quot;, &quot;14:00&quot;, &quot;2.0&quot;, &quot;Sede Norte - Aula Magna&quot;, &quot;Taller&quot;, &quot;Machine Learning para la detección temprana de trastornos&quot;, &quot;Ing. Valeria Soto&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;24&quot;, &quot;Jueves&quot;, &quot;04/03&quot;, &quot;12:00&quot;, &quot;14:00&quot;, &quot;2.0&quot;, &quot;Sede Este - Sala 1&quot;, &quot;Presentación de Trabajos&quot;, &quot;Efectos psicológicos de la inmersión en mundos virtuales&quot;, &quot;Msc. Ricardo Marín&quot;, 2),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;25&quot;, &quot;Jueves&quot;, &quot;04/03&quot;, &quot;14:00&quot;, &quot;15:00&quot;, &quot;1.0&quot;, &quot;Todas las Sedes&quot;, &quot;Almuerzo&quot;, &quot;&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;26&quot;, &quot;Jueves&quot;, &quot;04/03&quot;, &quot;15:00&quot;, &quot;16:30&quot;, &quot;1.5&quot;, &quot;Sede Oeste - Sala de Conferencias&quot;, &quot;Seminario&quot;, &quot;Diseño de interfaces inclusivas para la salud mental&quot;, &quot;Dr. Jaime Pardo&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;27&quot;, &quot;Viernes&quot;, &quot;05/03&quot;, &quot;09:00&quot;, &quot;11:00&quot;, &quot;2.0&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Keynote Speaker&quot;, &quot;La tecnología al servicio de la resiliencia&quot;, &quot;Dra. Guadalupe Castro&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;28&quot;, &quot;Viernes&quot;, &quot;05/03&quot;, &quot;11:00&quot;, &quot;11:30&quot;, &quot;0.5&quot;, &quot;Todas las Sedes&quot;, &quot;Receso&quot;, &quot;Pausa Café&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;29&quot;, &quot;Viernes&quot;, &quot;05/03&quot;, &quot;11:30&quot;, &quot;13:30&quot;, &quot;2.0&quot;, &quot;Sede Norte - Aula Magna&quot;, &quot;Taller&quot;, &quot;Uso de Biofeedback y BCI en psicología clínica&quot;, &quot;Lic. Roberto León&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;30&quot;, &quot;Viernes&quot;, &quot;05/03&quot;, &quot;11:30&quot;, &quot;13:30&quot;, &quot;2.0&quot;, &quot;Sede Este - Sala 1&quot;, &quot;Presentación de Trabajos&quot;, &quot;Impacto de los videojuegos en el desarrollo infantil&quot;, &quot;Msc. Paula Gil&quot;, 2),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;31&quot;, &quot;Viernes&quot;, &quot;05/03&quot;, &quot;13:30&quot;, &quot;14:30&quot;, &quot;1.0&quot;, &quot;Todas las Sedes&quot;, &quot;Almuerzo&quot;, &quot;&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;32&quot;, &quot;Viernes&quot;, &quot;05/03&quot;, &quot;14:30&quot;, &quot;16:30&quot;, &quot;2.0&quot;, &quot;Sede Oeste - Sala de Conferencias&quot;, &quot;Mesa Redonda&quot;, &quot;Psicología del Trabajo en la era del teletrabajo y la robótica&quot;, &quot;Diversos Especialistas&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;33&quot;, &quot;Sábado&quot;, &quot;06/03&quot;, &quot;09:00&quot;, &quot;10:30&quot;, &quot;1.5&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Conferencia&quot;, &quot;El cerebro conectado: de la neurociencia a la tecnología&quot;, &quot;Dr. Pedro Salas&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;34&quot;, &quot;Sábado&quot;, &quot;06/03&quot;, &quot;10:30&quot;, &quot;11:00&quot;, &quot;0.5&quot;, &quot;Todas las Sedes&quot;, &quot;Receso&quot;, &quot;Pausa Café&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;35&quot;, &quot;Sábado&quot;, &quot;06/03&quot;, &quot;11:00&quot;, &quot;13:00&quot;, &quot;2.0&quot;, &quot;Sede Norte - Aula Magna&quot;, &quot;Taller&quot;, &quot;Introducción a la programación para psicólogos&quot;, &quot;Ing. Andrea Soto&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;36&quot;, &quot;Sábado&quot;, &quot;06/03&quot;, &quot;11:00&quot;, &quot;13:00&quot;, &quot;2.0&quot;, &quot;Sede Este - Sala 1&quot;, &quot;Presentación de Trabajos&quot;, &quot;Inteligencia Artificial en la educación emocional&quot;, &quot;Msc. Felipe Neri&quot;, 2),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;37&quot;, &quot;Sábado&quot;, &quot;06/03&quot;, &quot;13:00&quot;, &quot;14:00&quot;, &quot;1.0&quot;, &quot;Todas las Sedes&quot;, &quot;Almuerzo&quot;, &quot;&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;38&quot;, &quot;Sábado&quot;, &quot;06/03&quot;, &quot;14:00&quot;, &quot;16:00&quot;, &quot;2.0&quot;, &quot;Sede Oeste - Sala de Conferencias&quot;, &quot;Panel&quot;, &quot;Ciberseguridad y el bienestar psicológico&quot;, &quot;Dra. Marta Vidal&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;39&quot;, &quot;Domingo&quot;, &quot;07/03&quot;, &quot;09:00&quot;, &quot;10:00&quot;, &quot;1.0&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Conferencia de Clausura&quot;, &quot;Integrando mundos: El futuro de Psicología y Tecnología&quot;, &quot;Dr. Antonio Ramos&quot;, 3),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;40&quot;, &quot;Domingo&quot;, &quot;07/03&quot;, &quot;10:00&quot;, &quot;11:30&quot;, &quot;1.5&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Panel de Clausura&quot;, &quot;Balance y Perspectivas del Congreso&quot;, &quot;Comité Organizador&quot;, 5),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;41&quot;, &quot;Domingo&quot;, &quot;07/03&quot;, &quot;11:30&quot;, &quot;12:00&quot;, &quot;0.5&quot;, &quot;Todas las Sedes&quot;, &quot;Receso&quot;, &quot;Pausa Café&quot;, &quot;&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;42&quot;, &quot;Domingo&quot;, &quot;07/03&quot;, &quot;12:00&quot;, &quot;13:00&quot;, &quot;1.0&quot;, &quot;Sede Central - Auditorio Principal&quot;, &quot;Acto de Clausura&quot;, &quot;Entrega de Premios y Despedida&quot;, &quot;Comité Organizador&quot;, 1),</b>
+<b class="fc">&nbsp;            new ConferencePointsData(&quot;43&quot;, &quot;Domingo&quot;, &quot;07/03&quot;, &quot;13:00&quot;, &quot;14:00&quot;, &quot;1.0&quot;, &quot;Sede Oeste - Sala de Conferencias&quot;, &quot;Networking&quot;, &quot;Vino de honor / Cóctel&quot;, &quot;&quot;, 1)</b>
+&nbsp;    );
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;public PointsDataLoader(ApplicationEventPublisher events) {</b>
+<b class="fc">&nbsp;    this.events = events;</b>
+&nbsp;}
+&nbsp;
+&nbsp;@Override
+&nbsp;public void run(String... args) throws Exception {
+<b class="fc">&nbsp;    System.out.println(&quot;Cargando inventario inicial de freebies y publicando eventos...&quot;);</b>
+&nbsp;
+&nbsp;    // Publicar un evento por cada ítem del inventario
+<b class="fc">&nbsp;    INVENTORY_DATA_FREEBIES.forEach(data -&gt; {</b>
+<b class="fc">&nbsp;        events.publishEvent(new FreebieDataImportedEvent(data));</b>
+&nbsp;    });
+&nbsp;
+<b class="fc">&nbsp;    System.out.println(&quot;Carga de inventario inicial finalizada. Eventos publicados.&quot;);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    System.out.println(&quot;Cargando inventario inicial de conferencias y publicando eventos...&quot;);</b>
+&nbsp;
+&nbsp;    // Publicar un evento por cada ítem del inventario
+<b class="fc">&nbsp;    INVENTORY_DATA_CONFERENCIAS.forEach(data -&gt; {</b>
+<b class="fc">&nbsp;        events.publishEvent(new ConferenceDataImportedEvent(data));</b>
+&nbsp;    });
+&nbsp;
+<b class="fc">&nbsp;    System.out.println(&quot;Carga de programa general finalizada. Eventos publicados.&quot;);</b>
+&nbsp;}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

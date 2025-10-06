@@ -1,0 +1,109 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExchangeRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.points.exchange.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ExchangeRepository (com.proyecto.congreso.points.exchange.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">ExchangeRepository$MockitoMock$92gxJO7S</td>
+  </tr>
+  <tr>
+    <td class="name">ExchangeRepository$MockitoMock$92gxJO7S$auxiliary$nSmVOhbI</td>
+  </tr>
+  <tr>
+    <td class="name">ExchangeRepository$MockitoMock$92gxJO7S$auxiliary$sCi1DmOJ</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.points.exchange.repository;
+&nbsp;
+&nbsp;import com.proyecto.congreso.points.exchange.model.Exchange;
+&nbsp;import org.springframework.data.mongodb.repository.MongoRepository;
+&nbsp;import org.springframework.data.mongodb.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface ExchangeRepository extends MongoRepository&lt;Exchange, String&gt; {
+&nbsp;
+&nbsp;
+&nbsp;    // Buscar todas los Exchanges de un Pass
+&nbsp;    List&lt;Exchange&gt; findByPassId(Long passId);
+&nbsp;
+&nbsp;    // Buscar asistentes a una conferencia específica
+&nbsp;    List&lt;Exchange&gt; findByFreebieId(String freebieId);
+&nbsp;
+&nbsp;    // Verificar si ya existe Exchange (evitar duplicados)
+&nbsp;    boolean existsByPassIdAndFreebieId(Long passId, String freebieId);
+&nbsp;
+&nbsp;    // Obtener Exchanges por participante
+&nbsp;    List&lt;Exchange&gt; findByParticipantId(Long participantId);
+&nbsp;
+&nbsp;    // Contar Exchanges de un Pass
+&nbsp;    long countByPassId(Long passId);
+&nbsp;
+&nbsp;    // Calcular total de puntos reducidos por Pass
+&nbsp;    @Query(&quot;{ &#39;passId&#39;: ?0 }&quot;)
+&nbsp;    List&lt;Exchange&gt; findExchangesProcedosByPass(Long passId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

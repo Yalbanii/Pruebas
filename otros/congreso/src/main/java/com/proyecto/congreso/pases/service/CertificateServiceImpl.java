@@ -2,7 +2,6 @@ package com.proyecto.congreso.pases.service;
 
 import com.proyecto.congreso.pases.model.Certificate;
 import com.proyecto.congreso.pases.repository.CertificateRepository;
-import com.proyecto.congreso.pases.repository.PassRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

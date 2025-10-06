@@ -16,14 +16,8 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    /**
-     * Maneja IllegalArgumentException (errores de negocio).
-     *
-     * Ejemplos:
-     * - Pass no encontrado
-     * - Conferencia no existe
-     * - Asistencia duplicada
-     */
+    // Maneja IllegalArgumentException(errores de negocio).
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("IllegalArgumentException: {}", ex.getMessage());

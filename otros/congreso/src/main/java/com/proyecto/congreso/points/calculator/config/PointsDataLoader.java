@@ -2,8 +2,8 @@ package com.proyecto.congreso.points.calculator.config;
 
 import com.proyecto.congreso.points.calculator.dto.ConferencePointsData;
 import com.proyecto.congreso.points.calculator.model.FreebiePointsData;
-import com.proyecto.congreso.points.events.ConferenceDataImportedEvent;
-import com.proyecto.congreso.points.events.FreebieDataImportedEvent;
+import com.proyecto.congreso.points.calculator.events.ConferenceDataImportedEvent;
+import com.proyecto.congreso.points.calculator.events.FreebieDataImportedEvent;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class PointsDataLoader implements CommandLineRunner {
     private final ApplicationEventPublisher events;
 
     // ---------------- FREEBIES - -----------------
-    // Los datos del CSV como una constante en el código
+    // Los datos del CSV como una constante en el codigo
     private static final List<FreebiePointsData> INVENTORY_DATA_FREEBIES = List.of(
             new FreebiePointsData("1", "Libreta Reciclada", "Libreta de tapa dura con logo del congreso", 350, 10, 350),
             new FreebiePointsData("2", "Bolígrafo Táctil", "Bolígrafo con punta de goma para pantallas táctiles", 350, 5, 350),

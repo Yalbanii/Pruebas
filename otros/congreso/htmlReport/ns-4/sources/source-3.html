@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.notification.service</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationService (com.proyecto.congreso.notification.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">NotificationService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.notification.service;
+&nbsp;
+&nbsp;import com.proyecto.congreso.notification.model.Notification;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface NotificationService {
+&nbsp;
+&nbsp;    // CRUD operations
+&nbsp;    Notification createNotification(Notification notification);
+&nbsp;
+&nbsp;    Notification getNotificationById(String id);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getAllNotifications();
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByParticipantId(Long participant);
+&nbsp;
+&nbsp;    void deleteNotification(String id);
+&nbsp;
+&nbsp;    // Query operations
+&nbsp;    List&lt;Notification&gt; getNotificationsByStatus(Notification.NotificationStatus status);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByType(Notification.NotificationType type);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByChannel(Notification.NotificationChannel channel);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByParticipantIdAndStatus(Long participantId, Notification.NotificationStatus status);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByParticipantIdOrderByDate(Long participantId);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByParticipantIdAndType(Long participantId, Notification.NotificationType type);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getPendingNotificationsAfter(LocalDateTime afterDate);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByDateRange(Long participantId, LocalDateTime startDate, LocalDateTime endDate);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; getNotificationsByPassId(Long passId);
+&nbsp;
+&nbsp;    long countByStatus(Notification.NotificationStatus status);
+&nbsp;
+&nbsp;
+&nbsp;    // Notification sending operations
+&nbsp;    void sendNotification(String notificationId);
+&nbsp;
+&nbsp;    void sendPendingNotifications();
+&nbsp;
+&nbsp;    void retryFailedNotifications();
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    // Business operations - Pases events
+&nbsp;    void notifyPassCreated(Long participantId, String participantEmail, Long passIdr, String passType);
+&nbsp;
+&nbsp;    void notifyAdd(Long participantId, String participantEmail, Long passId, Integer puntos);
+&nbsp;
+&nbsp;    void notifyUse(Long participantId, String participantEmail, Long passId, Integer puntos);
+&nbsp;
+&nbsp;
+&nbsp;    void notifyPassClosed(Long participantId, String participantEmail, Long passId);
+&nbsp;
+&nbsp;    // Business operations - Participantes events
+&nbsp;    void notifyParticipantRegistered(Long participantId, String participantEmail, String participantName);
+&nbsp;
+&nbsp;    void notifyParticipantUpdated(Long participantId, String participantEmail, String participantName);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

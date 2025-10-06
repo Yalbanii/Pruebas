@@ -1,0 +1,107 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MovementPointsLogService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.notification.service</a>
+</div>
+
+<h1>Coverage Summary for Class: MovementPointsLogService (com.proyecto.congreso.notification.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">MovementPointsLogService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.notification.service;
+&nbsp;
+&nbsp;import com.proyecto.congreso.notification.model.MovementPointsLog;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MovementPointsLogService {
+&nbsp;
+&nbsp;    MovementPointsLog createMovementPointsLog(MovementPointsLog movementPointsLog);
+&nbsp;
+&nbsp;    MovementPointsLog getMovementPointsLogById(String id);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getAllMovementPointsLog();
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByPassId(Long passId);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByMovementType(String movementType);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByParticipantId(Long participantId);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByStatus(String status);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByPassIdOrderedByDate(Long passId);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByDateRange(LocalDateTime start, LocalDateTime end);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByPassIdAndDateRange(Long passId, LocalDateTime start, LocalDateTime end);
+&nbsp;
+&nbsp;    List&lt;MovementPointsLog&gt; getMovementPointsLogByPoints(Integer puntos);
+&nbsp;
+&nbsp;    long countByMovementType(String movementType);
+&nbsp;
+&nbsp;    long countByPassId(Long passId);
+&nbsp;
+&nbsp;    long countByStatus(String status);
+&nbsp;
+&nbsp;    void deleteMovementPointsLog(String id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

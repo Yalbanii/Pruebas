@@ -1,0 +1,122 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > NotificationRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.notification.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: NotificationRepository (com.proyecto.congreso.notification.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">NotificationRepository$MockitoMock$e6Di37al</td>
+  </tr>
+  <tr>
+    <td class="name">NotificationRepository$MockitoMock$e6Di37al$auxiliary$AVxFBSUh</td>
+  </tr>
+  <tr>
+    <td class="name">NotificationRepository$MockitoMock$e6Di37al$auxiliary$F75QxsbO</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.notification.repository;
+&nbsp;
+&nbsp;import com.proyecto.congreso.notification.model.Notification;
+&nbsp;import org.springframework.context.annotation.Profile;
+&nbsp;import org.springframework.data.mongodb.repository.MongoRepository;
+&nbsp;import org.springframework.data.mongodb.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;@Profile(&quot;!test&quot;)
+&nbsp;public interface NotificationRepository extends MongoRepository&lt;Notification, String&gt; {
+&nbsp;
+&nbsp;
+&nbsp;    // Derived query methods
+&nbsp;    List&lt;Notification&gt; findByParticipantId(Long participantId);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; findByStatus(Notification.NotificationStatus status);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; findByType(Notification.NotificationType type);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; findByChannel(Notification.NotificationChannel channel);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; findByParticipantIdAndStatus(Long participantId, Notification.NotificationStatus status);
+&nbsp;
+&nbsp;    List&lt;Notification&gt; findByParticipantIdOrderByCreatedAtDesc(Long participantId);
+&nbsp;
+&nbsp;    // Custom query methods with @Query
+&nbsp;    @Query(&quot;{ &#39;participantId&#39;: ?0, &#39;type&#39;: ?1 }&quot;)
+&nbsp;    List&lt;Notification&gt; findByParticipantIdAndType(Long participantId, Notification.NotificationType type);
+&nbsp;
+&nbsp;    @Query(&quot;{ &#39;status&#39;: ?0, &#39;createdAt&#39;: { $gte: ?1 } }&quot;)
+&nbsp;    List&lt;Notification&gt; findPendingNotificationsAfter(Notification.NotificationStatus status, LocalDateTime afterDate);
+&nbsp;
+&nbsp;    @Query(&quot;{ &#39;participantId&#39;: ?0, &#39;createdAt&#39;: { $gte: ?1, $lte: ?2 } }&quot;)
+&nbsp;    List&lt;Notification&gt; findByParticipantIdAndDateRange(Long participantId, LocalDateTime startDate, LocalDateTime endDate);
+&nbsp;
+&nbsp;    @Query(value = &quot;{ &#39;status&#39;: ?0 }&quot;, count = true)
+&nbsp;    long countByStatus(Notification.NotificationStatus status);
+&nbsp;
+&nbsp;    @Query(&quot;{ &#39;passId&#39;: ?0 }&quot;)
+&nbsp;    List&lt;Notification&gt; findByPassId(Long passId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

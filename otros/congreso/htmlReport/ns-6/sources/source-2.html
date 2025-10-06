@@ -1,0 +1,107 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ParticipantRequest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.participantes.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: ParticipantRequest (com.proyecto.congreso.participantes.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ParticipantRequest</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.participantes.dto;
+&nbsp;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.validation.constraints.Email;
+&nbsp;import jakarta.validation.constraints.NotBlank;
+&nbsp;import jakarta.validation.constraints.Pattern;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;@Data
+&nbsp;@NoArgsConstructor
+&nbsp;@AllArgsConstructor
+&nbsp;public class ParticipantRequest {
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Name is required&quot;)
+&nbsp;    private String name;
+&nbsp;
+&nbsp;    @Column(nullable = false)
+&nbsp;    private String lastName;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Email is required&quot;)
+&nbsp;    @Email(message = &quot;Email should be valid&quot;)
+&nbsp;    private String email;
+&nbsp;
+&nbsp;    @NotBlank(message = &quot;Phone is required&quot;)
+&nbsp;    @Pattern(regexp = &quot;^\\d{10}$&quot;, message = &quot;Phone must be 10 digits&quot;)
+&nbsp;    private String phone;
+&nbsp;
+&nbsp;    @Column (nullable = false)
+&nbsp;    private String nacionality;
+&nbsp;
+&nbsp;    @Column (nullable = false)
+&nbsp;    private Integer age;
+&nbsp;
+&nbsp;    @Column (nullable = false)
+&nbsp;    private String area;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

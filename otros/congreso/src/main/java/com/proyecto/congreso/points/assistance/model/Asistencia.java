@@ -25,7 +25,7 @@ public class Asistencia {
     private String tituloConferencia;
     private Integer puntosOtorgados;
     private LocalDateTime fechaAsistencia;
-    private String status; // PROCESADA, PENDIENTE, FALLIDA
+    private String status;
 
     public static Asistencia crear(Long passId, Long participantId, String conferenciaId,
                                    String tituloConferencia, Integer puntos) {

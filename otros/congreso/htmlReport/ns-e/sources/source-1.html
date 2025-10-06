@@ -1,0 +1,150 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PassPointsCalculatorFactory</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.pases.batch.service</a>
+</div>
+
+<h1>Coverage Summary for Class: PassPointsCalculatorFactory (com.proyecto.congreso.pases.batch.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PassPointsCalculatorFactory</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.pases.batch.service;
+&nbsp;
+&nbsp;import com.proyecto.congreso.pases.model.Pass;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;@Component
+<b class="fc">&nbsp;public class PassPointsCalculatorFactory implements PointsCalculator {</b>
+&nbsp;    // Lógica de Agregar Puntos (Implementación de la interfaz)
+&nbsp;    @Override
+&nbsp;    public Integer addPoints(Pass pass, Integer pointsAdd) {
+&nbsp;        // Se pueden agregar mas elementos a la logica (logs, validaciones, etc.)
+<b class="nc">&nbsp;        return pass.getPointsBalance() + pointsAdd;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Lógica de Usar Puntos (Implementación de la interfaz)
+&nbsp;    @Override
+&nbsp;    public Integer usePoints(Pass pass, Integer pointsUse) {
+<b class="pc">&nbsp;        if (pass.getPointsBalance() &lt; pointsUse) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;❌ Not enough points in balance.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return pass.getPointsBalance() - pointsUse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+<b class="fc">&nbsp;    public Integer getPuntos() { return 1; } // Valor genérico, se obtiene del evento</b>
+&nbsp;    @Override
+<b class="fc">&nbsp;    public Pass.PointsMovementAdd getPointsMovementAdd() { return Pass.PointsMovementAdd.ADD; }</b>
+&nbsp;    @Override
+<b class="fc">&nbsp;    public Pass.PointsMovementUse getPointsMovementUse() { return Pass.PointsMovementUse.USE; }</b>
+&nbsp;    @Override
+<b class="fc">&nbsp;    public Pass.AccessStatus getAccessStatus() { return Pass.AccessStatus.NOT_REACHED; }</b>
+&nbsp;    @Override
+<b class="fc">&nbsp;    public Pass.CertificateStatus getCertificateStatus() { return Pass.CertificateStatus.NOT_REACHED; }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

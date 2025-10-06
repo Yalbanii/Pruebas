@@ -1,0 +1,244 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PassController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.pases.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: PassController (com.proyecto.congreso.pases.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PassController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (11/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.1%
+  </span>
+  <span class="absValue">
+    (41/46)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.pases.controller;
+&nbsp;
+&nbsp;import com.proyecto.congreso.pases.dto.CertificateResponse;
+&nbsp;import com.proyecto.congreso.pases.dto.PassRequest;
+&nbsp;import com.proyecto.congreso.pases.dto.PassResponse;
+&nbsp;import com.proyecto.congreso.pases.model.Certificate;
+&nbsp;import com.proyecto.congreso.pases.model.Pass;
+&nbsp;import com.proyecto.congreso.pases.service.CertificateService;
+&nbsp;import com.proyecto.congreso.pases.service.PassService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/pases&quot;)
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Tag(name = &quot;Pases&quot;, description = &quot;Passes management and points operations APIs&quot;)
+&nbsp;public class PassController {
+&nbsp;
+&nbsp;    private final PassService passService;
+&nbsp;    private final CertificateService certificateService;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/pass&quot;)
+&nbsp;    @Operation(summary = &quot;Create a new Pass&quot;)
+&nbsp;    public ResponseEntity&lt;PassResponse&gt; createPass(@Valid @RequestBody PassRequest request) {
+<b class="fc">&nbsp;        Pass pass = new Pass();</b>
+<b class="fc">&nbsp;        pass.setPassType(request.getPassType());</b>
+<b class="fc">&nbsp;        pass.setPointsBalance(request.getPointsBalance());</b>
+<b class="fc">&nbsp;        pass.setParticipantId(request.getParticipantId());</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass createdPass = passService.createPass(pass);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED)</b>
+<b class="fc">&nbsp;                .body(PassResponse.fromEntity(createdPass));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Get Pass by ID&quot;)
+&nbsp;    public ResponseEntity&lt;PassResponse&gt; getPassById(@PathVariable Long id) {
+<b class="fc">&nbsp;        Pass pass = passService.getPassById(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(PassResponse.fromEntity(pass));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/pases&quot;)
+&nbsp;    @Operation(summary = &quot;Get all Passes&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;PassResponse&gt;&gt; getAllPass() {
+<b class="fc">&nbsp;        List&lt;PassResponse&gt; pass = passService.getAllPass()</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(PassResponse::fromEntity)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(pass);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/participants/{participantId}&quot;)
+&nbsp;    @Operation(summary = &quot;Get all Pass by participant ID&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;PassResponse&gt;&gt; getPassByParticipantId(@PathVariable Long participantId) {
+<b class="fc">&nbsp;        List&lt;PassResponse&gt; pass = passService.getPassByParticipantId(participantId)</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(PassResponse::fromEntity)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(pass);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/participant/{participantId}/active&quot;)
+&nbsp;    @Operation(summary = &quot;Get active accounts by participant ID&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;PassResponse&gt;&gt; getActivePassByParticipantId(@PathVariable Long participantId){
+<b class="fc">&nbsp;        List&lt;PassResponse&gt; pass = passService.getActivePassByParticipantId(participantId)</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(PassResponse::fromEntity)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(pass);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/status/{status}&quot;)
+&nbsp;    @Operation(summary = &quot;Get Pass by status&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;PassResponse&gt;&gt; getPassByStatus(@PathVariable Pass.PassStatus status) {
+<b class="fc">&nbsp;        List&lt;PassResponse&gt; pass = passService.getPassByStatus(status)</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(PassResponse::fromEntity)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(pass);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/type/{type}&quot;)
+&nbsp;    @Operation(summary = &quot;Get Pass by type&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;PassResponse&gt;&gt; getAPassByType(@PathVariable Pass.PassType type) {
+<b class="nc">&nbsp;        List&lt;PassResponse&gt; pass = passService.getPassByType(type)</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .map(PassResponse::fromEntity)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(pass);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Update Pass&quot;)
+&nbsp;    public ResponseEntity&lt;PassResponse&gt; updatePass(
+&nbsp;            @PathVariable Long id,
+&nbsp;            @Valid @RequestBody PassRequest request) {
+<b class="fc">&nbsp;        Pass pass = new Pass();</b>
+<b class="fc">&nbsp;        pass.setPassType(request.getPassType());</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass updatedPass = passService.updatePass(id, pass);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(PassResponse.fromEntity(updatedPass));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Delete Pass (soft delete)&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deletePass(@PathVariable Long id) {
+<b class="fc">&nbsp;        passService.deletePass(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.noContent().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/{id}/activate&quot;)
+&nbsp;    @Operation(summary = &quot;Activate Pass&quot;)
+&nbsp;    public ResponseEntity&lt;PassResponse&gt; activateAPass(@PathVariable Long id) {
+<b class="fc">&nbsp;        Pass pass = passService.activatePass(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(PassResponse.fromEntity(pass));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/{id}/close&quot;)
+&nbsp;    @Operation(summary = &quot;Close Pass&quot;)
+&nbsp;    public ResponseEntity&lt;PassResponse&gt; closePass(@PathVariable Long id) {
+<b class="fc">&nbsp;        Pass pass = passService.closePass(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(PassResponse.fromEntity(pass));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/participant/{participantId}/count&quot;)
+&nbsp;    @Operation(summary = &quot;Count Pass by Participant ID&quot;)
+&nbsp;    public ResponseEntity&lt;Long&gt; countPassByParticipantId(@PathVariable Long participantId) {
+<b class="fc">&nbsp;        long count = passService.countPassByParticipantId(participantId);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(count);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

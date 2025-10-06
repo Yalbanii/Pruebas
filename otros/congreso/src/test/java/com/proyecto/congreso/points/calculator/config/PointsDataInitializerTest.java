@@ -1,14 +1,13 @@
 package com.proyecto.congreso.points.calculator.config;
 
-import com.proyecto.congreso.points.calculator.config.PointsDataInitializer;
 import com.proyecto.congreso.points.calculator.dto.ConferencePointsData;
 import com.proyecto.congreso.points.calculator.model.Conferencia;
 import com.proyecto.congreso.points.calculator.model.FreebiePointsData;
 import com.proyecto.congreso.points.calculator.model.Freebies;
 import com.proyecto.congreso.points.calculator.repository.ConferenceRepository;
 import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
-import com.proyecto.congreso.points.events.ConferenceDataImportedEvent;
-import com.proyecto.congreso.points.events.FreebieDataImportedEvent;
+import com.proyecto.congreso.points.calculator.events.ConferenceDataImportedEvent;
+import com.proyecto.congreso.points.calculator.events.FreebieDataImportedEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

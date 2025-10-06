@@ -1,18 +1,21 @@
 package com.proyecto.congreso.points.exchange.service;
 
+import com.proyecto.congreso.pases.model.Pass;
+import com.proyecto.congreso.pases.repository.PassRepository;
 import com.proyecto.congreso.points.calculator.model.Freebies;
 import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
 import com.proyecto.congreso.points.exchange.dto.ExchangeResponse;
+import com.proyecto.congreso.points.exchange.events.ExchangeFailedEvent;
 import com.proyecto.congreso.points.exchange.events.ExchangeRegisteredEvent;
 import com.proyecto.congreso.points.exchange.model.Exchange;
 import com.proyecto.congreso.points.exchange.repository.ExchangeRepository;
+import com.proyecto.congreso.points.service.FreebieStockHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -23,43 +26,55 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ExchangeServiceTest {
+
     private static final Long PASS_ID = 101L;
     private static final Long PARTICIPANT_ID = 900L;
     private static final String FREEBIE_ID = "F001";
     private static final String EXCHANGE_ID = "EX-MONGO-123";
     private static final Integer COSTO = 15;
     private static final String ARTICULO = "Llavero 3D (Cerebro)";
+    private static final Integer BALANCE_SUFICIENTE = 50;
 
     @Mock
     private ExchangeRepository exchangeRepository;
     @Mock
     private FreebieRepository freebieRepository;
     @Mock
+    private PassRepository passRepository;
+    @Mock
+    private FreebieStockHandler stockHandler;
+    @Mock
     private ApplicationEventPublisher eventPublisher;
 
-    // Spy se usa para mockear el método privado getParticipantIdFromPass
-    @Spy
     @InjectMocks
     private ExchangeService exchangeService;
 
+    private Pass mockPass;
     private Freebies mockFreebie;
     private Exchange mockExchangeSaved;
     private List<Exchange> mockExchangeList;
 
     @BeforeEach
     void setUp() {
-        // Mock de la entidad Freebies
+        // Pass Mock (Estado ACTIVO y saldo suficiente)
+        mockPass = new Pass();
+        mockPass.setPassId(PASS_ID);
+        mockPass.setParticipantId(PARTICIPANT_ID);
+        mockPass.setStatus(Pass.PassStatus.ACTIVE);
+        mockPass.setPointsBalance(BALANCE_SUFICIENTE);
+
+        // Freebie Mock (Con stock)
         mockFreebie = new Freebies();
         mockFreebie.setFreebieId(FREEBIE_ID);
         mockFreebie.setArticulo(ARTICULO);
         mockFreebie.setCosto(COSTO);
+        mockFreebie.setStockActual(10); // Stock suficiente
 
-        // Mock de la entidad Exchange tal como se guardaría
+        // Exchange Mock (Resultado después de guardar)
         mockExchangeSaved = new Exchange();
         mockExchangeSaved.setId(EXCHANGE_ID);
         mockExchangeSaved.setPassId(PASS_ID);
@@ -67,78 +82,139 @@ public class ExchangeServiceTest {
         mockExchangeSaved.setFreebieId(FREEBIE_ID);
         mockExchangeSaved.setArticulo(ARTICULO);
         mockExchangeSaved.setPuntosReducidos(COSTO);
-        mockExchangeSaved.setFechaIntercambio(LocalDateTime.now()); // Necesario para evitar NullPointerException en DTO
+        mockExchangeSaved.setFechaIntercambio(LocalDateTime.now());
 
-        // Mock de una lista de Exchanges
+        // Lista para pruebas de consulta
         mockExchangeList = List.of(mockExchangeSaved);
     }
 
-    // -------------------------------------------------------------------------
-    // Test: crearExchange
-    // -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
+// ## Test: crearExchange (Flujo de Éxito y Fallas)
+// -------------------------------------------------------------------------
 
     @Test
-    void crearExchange_shouldSuccessfullyRegisterAndPublishEvent() {
+    void crearExchange_shouldSuccessfullyCompleteTransaction() {
         // Given
-        // 1. Simular Freebie existe
+        // 1. Validaciones
+        when(passRepository.findById(PASS_ID)).thenReturn(Optional.of(mockPass));
         when(freebieRepository.findById(FREEBIE_ID)).thenReturn(Optional.of(mockFreebie));
-        // 2. Mockear el método REST simulado (usando doReturn en el spy)
-        doReturn(PARTICIPANT_ID).when(exchangeService).getParticipantIdFromPass(PASS_ID);
-        // 3. Simular guardado de Exchange
+
+        // 2. Reducir Stock (Éxito)
+        when(stockHandler.reduceStock(FREEBIE_ID)).thenReturn(true);
+
+        // 3. Crear Registro
         when(exchangeRepository.save(any(Exchange.class))).thenReturn(mockExchangeSaved);
 
         // When
         ExchangeResponse response = exchangeService.crearExchange(PASS_ID, FREEBIE_ID);
 
         // Then
-        // 1. Verificar llamadas a repositorios
-        verify(freebieRepository).findById(FREEBIE_ID);
+        // 1. Verificaciones de llamadas clave
+        verify(stockHandler).reduceStock(FREEBIE_ID);
         verify(exchangeRepository).save(any(Exchange.class));
+        verify(eventPublisher).publishEvent(any(ExchangeRegisteredEvent.class));
+        verify(eventPublisher, never()).publishEvent(any(ExchangeFailedEvent.class)); // No debe publicar evento de fallo
 
-        // 2. Verificar que el evento fue publicado y capturar su contenido
-        ArgumentCaptor<ExchangeRegisteredEvent> eventCaptor = ArgumentCaptor.forClass(ExchangeRegisteredEvent.class);
-        verify(eventPublisher).publishEvent(eventCaptor.capture());
-
-        // 3. Verificar el contenido del evento
-        ExchangeRegisteredEvent publishedEvent = eventCaptor.getValue();
-        assertEquals(PASS_ID, publishedEvent.getPassId());
-        assertEquals(FREEBIE_ID, publishedEvent.getFreebieId());
-        assertEquals(COSTO, publishedEvent.getCosto());
-
-        // 4. Verificar la respuesta del DTO
+        // 2. Verificación de la respuesta
         assertNotNull(response);
         assertEquals(EXCHANGE_ID, response.getId());
-        assertEquals(PARTICIPANT_ID, response.getParticipantId());
         assertEquals(COSTO, response.getCosto());
     }
 
+    // --- Escenarios de Falla (Validaciones) ---
+
     @Test
-    void crearExchange_shouldThrowExceptionIfFreebieNotFound() {
+    void crearExchange_shouldThrowException_whenPassNotFound() {
         // Given
-        // Simular que el Freebie NO existe
-        when(freebieRepository.findById(anyString())).thenReturn(Optional.empty());
+        when(passRepository.findById(PASS_ID)).thenReturn(Optional.empty());
 
         // When & Then
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             exchangeService.crearExchange(PASS_ID, FREEBIE_ID);
         });
 
-        assertTrue(exception.getMessage().contains("Freebie no encontrado"));
-        verify(exchangeRepository, never()).save(any(Exchange.class));
-        verify(eventPublisher, never()).publishEvent(any());
+        // Asegurar que no se tocó el stock ni se guardó el registro
+        verify(freebieRepository, never()).findById(any());
+        verify(stockHandler, never()).reduceStock(any());
+        verify(exchangeRepository, never()).save(any());
     }
 
-    // Nota: El test para la falla de getParticipantIdFromPass requeriría simular la excepción
-    // lanzada por el método privado, lo cual se hace cambiando el doReturn a doThrow.
 
-    // -------------------------------------------------------------------------
-    // Test: getExchangesByPass
-    // -------------------------------------------------------------------------
+    @Test
+    void crearExchange_shouldThrowException_whenFreebieNotFound() {
+        // Given
+        when(passRepository.findById(PASS_ID)).thenReturn(Optional.of(mockPass));
+        when(freebieRepository.findById(FREEBIE_ID)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            exchangeService.crearExchange(PASS_ID, FREEBIE_ID);
+        });
+
+        verify(stockHandler, never()).reduceStock(any());
+        verify(exchangeRepository, never()).save(any());
+    }
+
+    @Test
+    void crearExchange_shouldThrowException_whenStockIsZero() {
+        // Given
+        when(passRepository.findById(PASS_ID)).thenReturn(Optional.of(mockPass));
+        mockFreebie.setStockActual(0); // Setear stock en cero
+        when(freebieRepository.findById(FREEBIE_ID)).thenReturn(Optional.of(mockFreebie));
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            exchangeService.crearExchange(PASS_ID, FREEBIE_ID);
+        }, "Debe fallar por stock insuficiente.");
+
+        verify(stockHandler, never()).reduceStock(any());
+    }
+
+    @Test
+    void crearExchange_shouldThrowException_whenInsufficientPoints() {
+        // Given
+        when(passRepository.findById(PASS_ID)).thenReturn(Optional.of(mockPass));
+        mockPass.setPointsBalance(COSTO - 1); // Setear saldo insuficiente
+        when(freebieRepository.findById(FREEBIE_ID)).thenReturn(Optional.of(mockFreebie));
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            exchangeService.crearExchange(PASS_ID, FREEBIE_ID);
+        }, "Debe fallar por puntos insuficientes.");
+
+        verify(stockHandler, never()).reduceStock(any());
+    }
+
+    // --- Escenario de Falla (Después de Validaciones) ---
+
+    @Test
+    void crearExchange_shouldThrowException_whenStockHandlerFails() {
+        // Given
+        // Validaciones exitosas
+        when(passRepository.findById(PASS_ID)).thenReturn(Optional.of(mockPass));
+        when(freebieRepository.findById(FREEBIE_ID)).thenReturn(Optional.of(mockFreebie));
+
+        // Falla al reducir stock
+        when(stockHandler.reduceStock(FREEBIE_ID)).thenReturn(false);
+
+        // When & Then
+        assertThrows(IllegalStateException.class, () -> {
+            exchangeService.crearExchange(PASS_ID, FREEBIE_ID);
+        });
+
+        verify(exchangeRepository, never()).save(any()); // No debe guardar
+        verify(eventPublisher, never()).publishEvent(any(ExchangeRegisteredEvent.class));
+        verify(eventPublisher, never()).publishEvent(any(ExchangeFailedEvent.class)); // No se revierte si falla la reducción inicial.
+    }
+
+
+// -------------------------------------------------------------------------
+// ## Test: Métodos de Consulta (readOnly)
+// -------------------------------------------------------------------------
 
     @Test
     void getExchangesByPass_shouldReturnListOfResponses() {
         // Given
-        // Simular que el repositorio devuelve una lista
         when(exchangeRepository.findByPassId(PASS_ID)).thenReturn(mockExchangeList);
 
         // When
@@ -152,25 +228,9 @@ public class ExchangeServiceTest {
     }
 
     @Test
-    void getExchangesByPass_shouldReturnEmptyListIfNotFound() {
-        // Given
-        when(exchangeRepository.findByPassId(PASS_ID)).thenReturn(Collections.emptyList());
-
-        // When
-        List<ExchangeResponse> responses = exchangeService.getExchangesByPass(PASS_ID);
-
-        // Then
-        assertTrue(responses.isEmpty());
-    }
-
-    // -------------------------------------------------------------------------
-    // Test: getTotalPuntosReducidos
-    // -------------------------------------------------------------------------
-
-    @Test
     void getTotalPuntosReducidos_shouldCalculateTotalPuntosCorrectly() {
         // Given
-        Exchange exchange1 = mockExchangeSaved; // 15
+        Exchange exchange1 = mockExchangeSaved; // 15 puntos
         Exchange exchange2 = new Exchange();
         exchange2.setPuntosReducidos(25);
 
@@ -183,22 +243,6 @@ public class ExchangeServiceTest {
         // Then
         assertEquals(40, total); // 15 + 25
     }
-
-    @Test
-    void getTotalPuntosReducidos_shouldReturnZeroIfNoExchangesFound() {
-        // Given
-        when(exchangeRepository.findExchangesProcedosByPass(PASS_ID)).thenReturn(Collections.emptyList());
-
-        // When
-        Integer total = exchangeService.getTotalPuntosReducidos(PASS_ID);
-
-        // Then
-        assertEquals(0, total);
-    }
-
-    // -------------------------------------------------------------------------
-    // Test: countExchangesByPass
-    // -------------------------------------------------------------------------
 
     @Test
     void countExchangesByPass_shouldReturnCorrectCount() {

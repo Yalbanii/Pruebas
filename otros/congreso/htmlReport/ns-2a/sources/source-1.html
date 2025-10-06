@@ -1,0 +1,98 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Freebies</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.points.calculator.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Freebies (com.proyecto.congreso.points.calculator.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Freebies</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.points.calculator.model;
+&nbsp;
+&nbsp;import org.springframework.data.annotation.Id;
+&nbsp;import lombok.*;
+&nbsp;import org.springframework.data.mongodb.core.mapping.Document;
+&nbsp;import org.springframework.data.mongodb.core.mapping.Field;
+&nbsp;
+&nbsp;@Data
+&nbsp;@AllArgsConstructor
+&nbsp;@NoArgsConstructor
+&nbsp;@Document(collection = &quot;freebies&quot;)
+&nbsp;public class Freebies {
+&nbsp;    @Id
+&nbsp;    private String freebieId;  // MongoDB genera IDs de tipo String
+&nbsp;
+&nbsp;    @Field(&quot;articulo&quot;)
+&nbsp;    private String articulo;
+&nbsp;
+&nbsp;    @Field(&quot;descripcion&quot;)
+&nbsp;    private String descripcion;
+&nbsp;
+&nbsp;    @Field(&quot;stock_inicial&quot;)
+&nbsp;    private Integer stockInicial;
+&nbsp;
+&nbsp;    @Field(&quot;costo&quot;)
+&nbsp;    private Integer costo;
+&nbsp;
+&nbsp;    @Field(&quot;stock_actual&quot;)
+&nbsp;    private Integer stockActual;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

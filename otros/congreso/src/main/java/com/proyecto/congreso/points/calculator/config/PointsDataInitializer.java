@@ -6,8 +6,8 @@ import com.proyecto.congreso.points.calculator.model.Conferencia;
 import com.proyecto.congreso.points.calculator.model.Freebies;
 import com.proyecto.congreso.points.calculator.repository.ConferenceRepository;
 import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
-import com.proyecto.congreso.points.events.ConferenceDataImportedEvent;
-import com.proyecto.congreso.points.events.FreebieDataImportedEvent;
+import com.proyecto.congreso.points.calculator.events.ConferenceDataImportedEvent;
+import com.proyecto.congreso.points.calculator.events.FreebieDataImportedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -66,14 +66,14 @@ public class PointsDataInitializer {
             return;
         }
 
-        // 2. Convertir DTO a Entidad Conferencia CON TODOS LOS CAMPOS
+        // 2. Convertir DTO a Entidad Conferencia
         Conferencia conferencia = new Conferencia();
         conferencia.setConferenciaId(data.getConferenciaId());
         conferencia.setDia(data.getDia());
-        conferencia.setFecha(data.getFecha());  // String, no Long
-        conferencia.setHoraInicio(data.getHoraInicio());  // String
-        conferencia.setHoraFin(data.getHoraFin());  // String
-        conferencia.setDuracion(data.getDuracion());  // String
+        conferencia.setFecha(data.getFecha());
+        conferencia.setHoraInicio(data.getHoraInicio());
+        conferencia.setHoraFin(data.getHoraFin());
+        conferencia.setDuracion(data.getDuracion());
         conferencia.setSede(data.getSede());
         conferencia.setTipo(data.getTipo());
         conferencia.setTitulo(data.getTitulo());

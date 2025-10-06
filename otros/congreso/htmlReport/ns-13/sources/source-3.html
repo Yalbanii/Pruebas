@@ -1,0 +1,316 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PassServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.pases.service</a>
+</div>
+
+<h1>Coverage Summary for Class: PassServiceImpl (com.proyecto.congreso.pases.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PassServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.3%
+  </span>
+  <span class="absValue">
+    (57/58)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PassServiceImpl$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.3%
+  </span>
+  <span class="absValue">
+    (57/58)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.pases.service;
+&nbsp;
+&nbsp;import com.proyecto.congreso.participantes.model.Participant;
+&nbsp;import com.proyecto.congreso.participantes.repository.ParticipantRepository;
+&nbsp;import com.proyecto.congreso.pases.model.Certificate;
+&nbsp;import com.proyecto.congreso.points.exchange.events.ExchangeRequestedEvent;
+&nbsp;import com.proyecto.congreso.pases.events.PassAdquiredEvent;
+&nbsp;import com.proyecto.congreso.pases.model.Pass;
+&nbsp;import com.proyecto.congreso.pases.repository.PassRepository;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.context.ApplicationEventPublisher;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Random;
+&nbsp;
+&nbsp;@Service
+&nbsp;@RequiredArgsConstructor
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Transactional
+&nbsp;public class PassServiceImpl implements PassService {
+&nbsp;
+&nbsp;    private final ParticipantRepository participantRepository;
+&nbsp;    private final PassRepository passRepository;
+&nbsp;    private final ApplicationEventPublisher eventPublisher;
+&nbsp;    private final Random random = new Random();
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Pass createPass(Pass pass) {
+<b class="fc">&nbsp;        log.debug(&quot;Creating Pass for Participant: {}&quot;, pass.getParticipantId());</b>
+&nbsp;
+<b class="fc">&nbsp;        Participant passParticipant = participantRepository.findById(pass.getParticipantId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Participant not found with id: &quot; + pass.getParticipantId()));</b>
+&nbsp;
+&nbsp;        // Establecer estado inicial
+<b class="fc">&nbsp;        pass.setStatus(Pass.PassStatus.ACTIVE);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (pass.getPointsBalance() == null) {</b>
+<b class="nc">&nbsp;            pass.setPointsBalance(0);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (pass.getPointsBalance().compareTo(0) &lt; 0) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Initial balance of points cannot be negative&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Pass savedPass = passRepository.save(pass);</b>
+<b class="fc">&nbsp;        log.info(&quot;Pass created successfully: {}&quot;, savedPass.getPassId());</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        PassAdquiredEvent event = new PassAdquiredEvent();</b>
+<b class="fc">&nbsp;        eventPublisher.publishEvent(event);</b>
+<b class="fc">&nbsp;        log.debug(&quot;PassAdquiredEvent published for pass ID: {}&quot;, savedPass.getPassId());</b>
+&nbsp;
+<b class="fc">&nbsp;        return savedPass;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Pass getPassById(Long id) {
+<b class="fc">&nbsp;        log.debug(&quot;Getting Pass by id: {}&quot;, id);</b>
+<b class="fc">&nbsp;        return passRepository.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Pass not found with id: &quot; + id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Pass&gt; getAllPass() {
+<b class="fc">&nbsp;        log.debug(&quot;Getting all Pass&quot;);</b>
+<b class="fc">&nbsp;        return passRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Pass&gt; getPassByParticipantId(Long participantId) {
+<b class="fc">&nbsp;        log.debug(&quot;Getting Pass for participant: {}&quot;, participantId);</b>
+<b class="fc">&nbsp;        return passRepository.findByParticipantId(participantId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Pass&gt; getActivePassByParticipantId(Long participantId) {
+<b class="fc">&nbsp;        log.debug(&quot;Getting active Pass for Participant: {}&quot;, participantId);</b>
+<b class="fc">&nbsp;        return passRepository.findActivePassByParticipantId(participantId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Pass updatePass(Long id, Pass pass) {
+<b class="fc">&nbsp;        log.debug(&quot;Updating Pass with id: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass existingPass = getPassById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        existingPass.setPassType(pass.getPassType());</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass updatedPass = passRepository.save(existingPass);</b>
+<b class="fc">&nbsp;        log.info(&quot;Pass updated successfully: {}&quot;, id);</b>
+<b class="fc">&nbsp;        return updatedPass;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deletePass(Long id) {
+<b class="fc">&nbsp;        log.debug(&quot;Deleting Pass with id: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass pass = getPassById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (pass.getPointsBalance().compareTo(0) != 0) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Cannot delete Pass with non-zero balance of points&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Soft delete: cambiar estado a CLOSED
+<b class="fc">&nbsp;        pass.setStatus(Pass.PassStatus.CLOSED);</b>
+<b class="fc">&nbsp;        passRepository.save(pass);</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Account soft deleted (closed): {}&quot;, id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Pass activatePass(Long id) {
+<b class="fc">&nbsp;        log.debug(&quot;Activating Pass with id: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass pass = getPassById(id);</b>
+<b class="fc">&nbsp;        pass.setStatus(Pass.PassStatus.ACTIVE);</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass activatedPass = passRepository.save(pass);</b>
+<b class="fc">&nbsp;        log.info(&quot;Pass activated: {}&quot;, id);</b>
+<b class="fc">&nbsp;        return activatedPass;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Pass closePass(Long id) {
+<b class="fc">&nbsp;        log.debug(&quot;Closing Pass with id: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass pass = getPassById(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (pass.getPointsBalance().compareTo(0) != 0) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Cannot close Pass with non-zero balance. Current balance of points: &quot; + pass.getPointsBalance());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        pass.setStatus(Pass.PassStatus.CLOSED);</b>
+&nbsp;
+<b class="fc">&nbsp;        Pass closedPass = passRepository.save(pass);</b>
+<b class="fc">&nbsp;        log.info(&quot;Pass closed: {}&quot;, id);</b>
+&nbsp;
+<b class="fc">&nbsp;        return closedPass;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Pass&gt; getPassByStatus(Pass.PassStatus status) {
+<b class="fc">&nbsp;        log.debug(&quot;Getting Pass by status: {}&quot;, status);</b>
+<b class="fc">&nbsp;        return passRepository.findByStatus(status);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;Pass&gt; getPassByType(Pass.PassType passType) {
+<b class="fc">&nbsp;        log.debug(&quot;Getting Pass by type: {}&quot;, passType);</b>
+<b class="fc">&nbsp;        return passRepository.findByPassType(passType);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public long countPassByParticipantId(Long participantId) {
+<b class="fc">&nbsp;        return passRepository.countByParticipantId(participantId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public boolean existsByPassId(Long passId) {
+<b class="fc">&nbsp;        return passRepository.existsByPassId(passId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    // Método llamado desde el controlador REST
+&nbsp;    @Transactional
+&nbsp;    public void startExchange(Long passId, String freebieId) {
+<b class="fc">&nbsp;        eventPublisher.publishEvent(new ExchangeRequestedEvent(passId, freebieId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

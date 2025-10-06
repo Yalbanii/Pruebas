@@ -1,0 +1,292 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExchangeService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.points.exchange.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ExchangeService (com.proyecto.congreso.points.exchange.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExchangeService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.6%
+  </span>
+  <span class="absValue">
+    (55/65)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ExchangeService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84.6%
+  </span>
+  <span class="absValue">
+    (55/65)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.points.exchange.service;
+&nbsp;
+&nbsp;import com.proyecto.congreso.pases.model.Pass;
+&nbsp;import com.proyecto.congreso.pases.repository.PassRepository;
+&nbsp;import com.proyecto.congreso.points.exchange.dto.ExchangeResponse;
+&nbsp;import com.proyecto.congreso.points.exchange.events.ExchangeFailedEvent;
+&nbsp;import com.proyecto.congreso.points.exchange.model.Exchange;
+&nbsp;import com.proyecto.congreso.points.calculator.model.Freebies;
+&nbsp;import com.proyecto.congreso.points.exchange.repository.ExchangeRepository;
+&nbsp;import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
+&nbsp;import com.proyecto.congreso.points.exchange.events.ExchangeRegisteredEvent;
+&nbsp;import com.proyecto.congreso.points.service.FreebieStockHandler;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.context.ApplicationEventPublisher;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequiredArgsConstructor
+&nbsp;public class ExchangeService {
+&nbsp;
+&nbsp;    private final ExchangeRepository exchangeRepository;
+&nbsp;    private final FreebieRepository freebieRepository;
+&nbsp;    private final PassRepository passRepository;
+&nbsp;    private final FreebieStockHandler stockHandler;
+&nbsp;    private final ApplicationEventPublisher eventPublisher;
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public ExchangeResponse crearExchange(Long passId, String freebieId) {
+<b class="fc">&nbsp;        log.info(&quot;Iniciando intercambio: Pass={}, Freebie={}&quot;, passId, freebieId);</b>
+&nbsp;
+&nbsp;        // ========== VALIDACIONES ==========
+&nbsp;
+<b class="fc">&nbsp;        Pass pass = passRepository.findById(passId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; {</b>
+<b class="fc">&nbsp;                    log.error(&quot;❌ Pass no encontrado: {}&quot;, passId);</b>
+<b class="fc">&nbsp;                    return new IllegalArgumentException(&quot;Pass no encontrado: &quot; + passId);</b>
+&nbsp;                });
+&nbsp;
+<b class="pc">&nbsp;        if (pass.getStatus() != Pass.PassStatus.ACTIVE) {</b>
+<b class="nc">&nbsp;            log.error(&quot;❌ Pass {} no está activo. Estado: {}&quot;, passId, pass.getStatus());</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;El Pass no está activo&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Validar que el freebie existe
+<b class="fc">&nbsp;        Freebies freebie = freebieRepository.findById(freebieId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; {</b>
+<b class="fc">&nbsp;                    log.error(&quot;❌ Freebie no encontrado: {}&quot;, freebieId);</b>
+<b class="fc">&nbsp;                    return new IllegalArgumentException(&quot;Freebie no encontrado: &quot; + freebieId);</b>
+&nbsp;                });
+&nbsp;
+&nbsp;        // Validar que hay stock disponible
+<b class="fc">&nbsp;        if (freebie.getStockActual() &lt;= 0) {</b>
+<b class="fc">&nbsp;            log.error(&quot;❌ Sin stock disponible para Freebie: {} ({})&quot;,</b>
+<b class="fc">&nbsp;                    freebieId, freebie.getArticulo());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(</b>
+<b class="fc">&nbsp;                    &quot;Stock insuficiente para el Freebie: &quot; + freebie.getArticulo());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Validar que el Pass tiene puntos suficientes
+<b class="fc">&nbsp;        if (pass.getPointsBalance() &lt; freebie.getCosto()) {</b>
+<b class="fc">&nbsp;            log.error(&quot;❌ Puntos insuficientes. Balance: {}, Costo: {}&quot;,</b>
+<b class="fc">&nbsp;                    pass.getPointsBalance(), freebie.getCosto());</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(</b>
+<b class="fc">&nbsp;                    String.format(&quot;Puntos insuficientes. Necesitas %d puntos, tienes %d&quot;,</b>
+<b class="fc">&nbsp;                            freebie.getCosto(), pass.getPointsBalance()));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;✅ Validaciones completadas exitosamente&quot;);</b>
+&nbsp;
+&nbsp;
+&nbsp;        // ========== REDUCIR STOCK ==========
+<b class="fc">&nbsp;        boolean stockReducido = stockHandler.reduceStock(freebieId);</b>
+<b class="fc">&nbsp;        if (!stockReducido) {</b>
+<b class="fc">&nbsp;            log.error(&quot;❌ Error al reducir stock para Freebie: {}&quot;, freebieId);</b>
+<b class="fc">&nbsp;            throw new IllegalStateException(&quot;Error al reservar el freebie. Intenta nuevamente.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;✅ Stock reducido exitosamente&quot;);</b>
+&nbsp;
+&nbsp;
+&nbsp;        // ========== CREAR REGISTRO DE INTERCAMBIO ==========
+&nbsp;        try {
+<b class="fc">&nbsp;            Exchange exchange = Exchange.crear(</b>
+&nbsp;                    passId,
+<b class="fc">&nbsp;                    pass.getParticipantId(),</b>
+&nbsp;                    freebieId,
+<b class="fc">&nbsp;                    freebie.getArticulo(),</b>
+<b class="fc">&nbsp;                    freebie.getCosto()</b>
+&nbsp;            );
+&nbsp;
+<b class="fc">&nbsp;            exchange = exchangeRepository.save(exchange);</b>
+<b class="fc">&nbsp;            log.info(&quot;✅ Exchange registrado en MongoDB: ID={}, ParticipantId={}&quot;,</b>
+<b class="fc">&nbsp;                    exchange.getId(), pass.getParticipantId());</b>
+&nbsp;
+&nbsp;
+&nbsp;            // ========== PUBLICAR EVENTO PARA DESCONTAR PUNTOS ==========
+<b class="fc">&nbsp;            ExchangeRegisteredEvent event = new ExchangeRegisteredEvent(</b>
+&nbsp;                    passId,
+&nbsp;                    freebieId,
+<b class="fc">&nbsp;                    freebie.getArticulo(),</b>
+<b class="fc">&nbsp;                    freebie.getCosto()</b>
+&nbsp;            );
+&nbsp;
+<b class="fc">&nbsp;            eventPublisher.publishEvent(event);</b>
+<b class="fc">&nbsp;            log.info(&quot;Evento ExchangeRegisteredEvent publicado: Pass={}, Puntos={}&quot;,</b>
+<b class="fc">&nbsp;                    passId, freebie.getCosto());</b>
+&nbsp;
+<b class="fc">&nbsp;            log.info(&quot;🎉 Intercambio completado exitosamente: Pass={}, Freebie={}, Puntos={}&quot;,</b>
+<b class="fc">&nbsp;                    passId, freebieId, freebie.getCosto());</b>
+&nbsp;
+<b class="fc">&nbsp;            return ExchangeResponse.fromEntity(exchange);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            log.error(&quot;❌ Error después de reducir stock. Revirtiendo...&quot;, e);</b>
+&nbsp;
+<b class="nc">&nbsp;            eventPublisher.publishEvent(ExchangeFailedEvent.builder()</b>
+<b class="nc">&nbsp;                    .passId(passId)</b>
+<b class="nc">&nbsp;                    .freebieId(freebieId)</b>
+<b class="nc">&nbsp;                    .reason(&quot;Error al crear registro de intercambio: &quot; + e.getMessage())</b>
+<b class="nc">&nbsp;                    .shouldRevertStock(true)</b>
+<b class="nc">&nbsp;                    .build());</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new IllegalStateException(</b>
+&nbsp;                    &quot;Error al completar el intercambio. El stock ha sido revertido.&quot;, e);
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Obtiene el historial de intercambios de un Pass.
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public List&lt;ExchangeResponse&gt; getExchangesByPass(Long passId) {
+<b class="fc">&nbsp;        log.debug(&quot;🔍 Obteniendo intercambios del Pass: {}&quot;, passId);</b>
+<b class="fc">&nbsp;        return exchangeRepository.findByPassId(passId).stream()</b>
+<b class="fc">&nbsp;                .map(ExchangeResponse::fromEntity)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly=true)
+&nbsp;    public Integer getTotalPuntosReducidos(Long passId) {
+<b class="fc">&nbsp;        log.debug(&quot;🔍 Calculando puntos reducidos del Pass: {}&quot;, passId);</b>
+<b class="fc">&nbsp;        List&lt;Exchange&gt; exchanges = exchangeRepository.findExchangesProcedosByPass(passId);</b>
+<b class="fc">&nbsp;        return exchanges.stream()</b>
+<b class="fc">&nbsp;                .mapToInt(Exchange::getPuntosReducidos)</b>
+<b class="fc">&nbsp;                .sum();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Cuenta los intercambios de un Pass.
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public long countExchangesByPass(Long passId) {
+<b class="fc">&nbsp;        log.debug(&quot;🔍 Contando intercambios del Pass: {}&quot;, passId);</b>
+<b class="fc">&nbsp;        return exchangeRepository.countByPassId(passId);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

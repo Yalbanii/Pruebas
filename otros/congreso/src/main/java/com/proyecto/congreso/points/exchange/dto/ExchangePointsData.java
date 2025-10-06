@@ -13,16 +13,10 @@ public class ExchangePointsData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-
-    //ID del intercambio en MongoDB (para marcarlo como procesada)
     private String exchangeId;
 
-
-    // ID del Pass en MySQL (para actualizar balance)
     private Long passId;
 
-
-    //ID de la conferencia a la que asistió
     private String freebieId;
 
     private Integer costo;

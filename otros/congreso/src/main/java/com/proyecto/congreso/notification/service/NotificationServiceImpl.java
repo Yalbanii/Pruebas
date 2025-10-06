@@ -268,15 +268,9 @@ public class NotificationServiceImpl implements NotificationService {
         sendNotification(notification.getId());
     }
 
-    /**
-     * Simulates sending a notification based on the channel.
-     * In a real application, this would integrate with email services (SendGrid, AWS SES),
-     * SMS services (Twilio), or push notification services (Firebase).
-     *
-     * @param notification The notification to send
-     * @return true if simulation succeeds, false otherwise
-     */
-    private boolean simulateSendNotification(Notification notification) {
+    // sending a notification based on the channel (email, SMS services or push notification)
+
+    public boolean simulateSendNotification(Notification notification) {
         // Simulate sending delay
         try {
             Thread.sleep(100);
@@ -313,6 +307,7 @@ public class NotificationServiceImpl implements NotificationService {
         log.info("💬 IN-APP notification created: {}", notification.getMessage());
         return true;
     }
+
 
     // Event Listeners
     @EventListener

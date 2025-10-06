@@ -1,53 +1,77 @@
 package com.proyecto.congreso.points.service;
 
 import com.proyecto.congreso.points.exchange.events.ExchangeFailedEvent;
-import com.proyecto.congreso.points.exchange.events.ExchangeRequestedEvent;
-import com.proyecto.congreso.points.events.FreebieStockReservedEvent;
-import com.proyecto.congreso.points.calculator.model.Freebies;
 import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
-import org.springframework.modulith.events.ApplicationModuleListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Usa la de Spring
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class FreebieStockHandler {
-    // Solo inyecta su propio repositorio y el publicador de eventos
+
     private final FreebieRepository freebieRepository;
     private final ApplicationEventPublisher events;
 
     @EventListener
-    @Async
     @Transactional
-    public void handleExchangeRequest(ExchangeRequestedEvent event) {
-        Optional<Freebies> optionalFreebie = freebieRepository.findById(event.getFreebieId());
+    public void handleExchangeFailed(ExchangeFailedEvent event) {
+        log.warn(" Evento recibido: ExchangeFailedEvent - Pass={}, Razón={}",
+                event.getPassId(), event.getReason());
 
-        if (optionalFreebie.isEmpty() || optionalFreebie.get().getStockActual() <= 0) {
-            log.warn("Fallo de Stock: Freebie ID {} no encontrado o sin stock.", event.getFreebieId());
-            events.publishEvent(new ExchangeFailedEvent(event.getPassId(), "Stock insuficiente."));
+        if (!Boolean.TRUE.equals(event.getShouldRevertStock()) || event.getFreebieId() == null) {
+            log.debug("ℹ️ No hay stock que revertir para este tipo de fallo");
             return;
         }
 
-        Freebies freebie = optionalFreebie.get();
+        try {
+            // Revertir el stock
+            freebieRepository.findById(event.getFreebieId()).ifPresentOrElse(
+                    freebie -> {
+                        Integer stockAnterior = freebie.getStockActual();
+                        freebie.setStockActual(stockAnterior + 1);
+                        freebieRepository.save(freebie);
 
-        // 1. Reducir Stock
-        freebie.setStockActual(freebie.getStockActual() - 1);
-        freebieRepository.save(freebie);
+                        log.info("✅ Stock revertido para Freebie ID {}: {} → {}",
+                                event.getFreebieId(), stockAnterior, freebie.getStockActual());
+                    },
+                    () -> log.warn("⚠️ Freebie ID {} no encontrado. No se pudo revertir stock.",
+                            event.getFreebieId())
+            );
 
-        log.info("Stock de Freebie ID {} reservado. Costo: {}", freebie.getFreebieId(), freebie.getCosto());
+        } catch (Exception e) {
+            log.error("❌ Error al revertir stock: {}", event, e);
+        }
+    }
 
-        // 2. Publicar evento de éxito para que el módulo Pass descuente los puntos
-        events.publishEvent(new FreebieStockReservedEvent(
-                event.getPassId(),
-                freebie.getFreebieId(),
-                freebie.getCosto()
-        ));
+    // Método auxiliar para reducir stock directamente usado por ExchangeService, es llamado directamente, no es LISTENER
+    @Transactional
+    public boolean reduceStock(String freebieId) {
+        log.info(" Reduciendo stock de Freebie ID: {}", freebieId);
+
+        return freebieRepository.findById(freebieId)
+                .map(freebie -> {
+                    if (freebie.getStockActual() <= 0) {
+                        log.warn("⚠️ Stock insuficiente para Freebie ID: {}", freebieId);
+                        return false;
+                    }
+
+                    Integer stockAnterior = freebie.getStockActual();
+                    freebie.setStockActual(stockAnterior - 1);
+                    freebieRepository.save(freebie);
+
+                    log.info("✅ Stock reducido para Freebie ID {}: {} → {}",
+                            freebieId, stockAnterior, freebie.getStockActual());
+
+                    return true;
+                })
+                .orElseGet(() -> {
+                    log.error("❌ Freebie ID {} no encontrado", freebieId);
+                    return false;
+                });
     }
 }

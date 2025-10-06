@@ -1,0 +1,116 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AsistenciaRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.points.assistance.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: AsistenciaRepository (com.proyecto.congreso.points.assistance.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">AsistenciaRepository$MockitoMock$9xOk4jGT</td>
+  </tr>
+  <tr>
+    <td class="name">AsistenciaRepository$MockitoMock$9xOk4jGT$auxiliary$LZ4W5SU1</td>
+  </tr>
+  <tr>
+    <td class="name">AsistenciaRepository$MockitoMock$9xOk4jGT$auxiliary$qlSRmVa1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.points.assistance.repository;
+&nbsp;
+&nbsp;import com.proyecto.congreso.points.assistance.model.Asistencia;
+&nbsp;import org.springframework.data.mongodb.repository.MongoRepository;
+&nbsp;import org.springframework.data.mongodb.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface AsistenciaRepository  extends MongoRepository&lt;Asistencia, String&gt; {
+&nbsp;
+&nbsp;    List&lt;Asistencia&gt; findByPassId(Long passId);
+&nbsp;
+&nbsp;    // Buscar asistentes a una conferencia específica
+&nbsp;    List&lt;Asistencia&gt; findByConferenciaId(String conferenciaId);
+&nbsp;
+&nbsp;    // Verificar si ya existe asistencia (evitar duplicados)
+&nbsp;    boolean existsByPassIdAndConferenciaId(Long passId, String conferenciaId);
+&nbsp;
+&nbsp;    // Obtener asistencias por participante
+&nbsp;    List&lt;Asistencia&gt; findByParticipantId(Long participantId);
+&nbsp;
+&nbsp;    // Obtener asistencias en un rango de fechas
+&nbsp;    List&lt;Asistencia&gt; findByFechaAsistenciaBetween(LocalDateTime inicio, LocalDateTime fin);
+&nbsp;
+&nbsp;    // Contar asistencias de un Pass
+&nbsp;    long countByPassId(Long passId);
+&nbsp;
+&nbsp;    // Buscar por Pass y estado
+&nbsp;    List&lt;Asistencia&gt; findByPassIdAndStatus(Long passId, String status);
+&nbsp;
+&nbsp;    List&lt;Asistencia&gt; findByStatus(String status);
+&nbsp;
+&nbsp;    // Calcular total de puntos acumulados por Pass
+&nbsp;    @Query(&quot;{ &#39;passId&#39;: ?0, &#39;status&#39;: &#39;PROCESADA&#39; }&quot;)
+&nbsp;    List&lt;Asistencia&gt; findAsistenciasProcedasByPass(Long passId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

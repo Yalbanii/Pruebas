@@ -66,6 +66,7 @@ public class Pass {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+
     public enum PassType {
         GENERAL, //solo acceso
         ALL_INCLUDED //acceso, transporte y comida incluida

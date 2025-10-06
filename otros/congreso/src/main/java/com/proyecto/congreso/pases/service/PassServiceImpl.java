@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -32,19 +31,16 @@ public class PassServiceImpl implements PassService {
     public Pass createPass(Pass pass) {
         log.debug("Creating Pass for Participant: {}", pass.getParticipantId());
 
-        // Validar que el Participante existe
         Participant passParticipant = participantRepository.findById(pass.getParticipantId())
                 .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + pass.getParticipantId()));
 
         // Establecer estado inicial
         pass.setStatus(Pass.PassStatus.ACTIVE);
 
-        // Balance inicial de puntos (0 por defecto)
         if (pass.getPointsBalance() == null) {
             pass.setPointsBalance(0);
         }
 
-        // Validar balance inicial de puntos no negativo
         if (pass.getPointsBalance().compareTo(0) < 0) {
             throw new IllegalArgumentException("Initial balance of points cannot be negative");
         }
@@ -52,7 +48,7 @@ public class PassServiceImpl implements PassService {
         Pass savedPass = passRepository.save(pass);
         log.info("Pass created successfully: {}", savedPass.getPassId());
 
-        // Publicar evento
+
         PassAdquiredEvent event = new PassAdquiredEvent();
         eventPublisher.publishEvent(event);
         log.debug("PassAdquiredEvent published for pass ID: {}", savedPass.getPassId());
@@ -109,7 +105,6 @@ public class PassServiceImpl implements PassService {
 
         Pass pass = getPassById(id);
 
-        // Validar que el balance de puntos sea 0
         if (pass.getPointsBalance().compareTo(0) != 0) {
             throw new IllegalArgumentException("Cannot delete Pass with non-zero balance of points");
         }
@@ -139,7 +134,6 @@ public class PassServiceImpl implements PassService {
 
         Pass pass = getPassById(id);
 
-        // Validar que el balance sea 0
         if (pass.getPointsBalance().compareTo(0) != 0) {
             throw new IllegalArgumentException("Cannot close Pass with non-zero balance. Current balance of points: " + pass.getPointsBalance());
         }
@@ -177,7 +171,6 @@ public class PassServiceImpl implements PassService {
     public boolean existsByPassId(Long passId) {
         return passRepository.existsByPassId(passId);
     }
-
 
 
     // Método llamado desde el controlador REST

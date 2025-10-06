@@ -1,11 +1,15 @@
 package com.proyecto.congreso.points.exchange.service;
 
+import com.proyecto.congreso.pases.model.Pass;
+import com.proyecto.congreso.pases.repository.PassRepository;
 import com.proyecto.congreso.points.exchange.dto.ExchangeResponse;
+import com.proyecto.congreso.points.exchange.events.ExchangeFailedEvent;
 import com.proyecto.congreso.points.exchange.model.Exchange;
 import com.proyecto.congreso.points.calculator.model.Freebies;
 import com.proyecto.congreso.points.exchange.repository.ExchangeRepository;
 import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
 import com.proyecto.congreso.points.exchange.events.ExchangeRegisteredEvent;
+import com.proyecto.congreso.points.service.FreebieStockHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,80 +26,112 @@ public class ExchangeService {
 
     private final ExchangeRepository exchangeRepository;
     private final FreebieRepository freebieRepository;
+    private final PassRepository passRepository;
+    private final FreebieStockHandler stockHandler;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public ExchangeResponse crearExchange(Long passId, String freebieId) {
-        log.info("📋 Autorizando intercambio : Pass={}, Freebie={}", passId, freebieId);
+        log.info("Iniciando intercambio: Pass={}, Freebie={}", passId, freebieId);
 
-        // 1. Validar que el freebie existe
-        Freebies freebies = freebieRepository.findById(freebieId)
+        // ========== VALIDACIONES ==========
+
+        Pass pass = passRepository.findById(passId)
+                .orElseThrow(() -> {
+                    log.error("❌ Pass no encontrado: {}", passId);
+                    return new IllegalArgumentException("Pass no encontrado: " + passId);
+                });
+
+        if (pass.getStatus() != Pass.PassStatus.ACTIVE) {
+            log.error("❌ Pass {} no está activo. Estado: {}", passId, pass.getStatus());
+            throw new IllegalArgumentException("El Pass no está activo");
+        }
+
+        // Validar que el freebie existe
+        Freebies freebie = freebieRepository.findById(freebieId)
                 .orElseThrow(() -> {
                     log.error("❌ Freebie no encontrado: {}", freebieId);
                     return new IllegalArgumentException("Freebie no encontrado: " + freebieId);
                 });
 
-        // 2. Obtener participantId del Pass mediante API REST
-        Long participantId = getParticipantIdFromPass(passId);
+        // Validar que hay stock disponible
+        if (freebie.getStockActual() <= 0) {
+            log.error("❌ Sin stock disponible para Freebie: {} ({})",
+                    freebieId, freebie.getArticulo());
+            throw new IllegalArgumentException(
+                    "Stock insuficiente para el Freebie: " + freebie.getArticulo());
+        }
 
-        // 3. Crear registro de intercambio en MongoDB
-        Exchange exchange = new Exchange();
-        exchange.setPassId(passId);
-        exchange.setParticipantId(participantId);
-        exchange.setFreebieId(freebieId);
-        exchange.setArticulo(freebies.getArticulo());
-        exchange.setPuntosReducidos(freebies.getCosto());
-        exchange.setFechaIntercambio(java.time.LocalDateTime.now());
+        // Validar que el Pass tiene puntos suficientes
+        if (pass.getPointsBalance() < freebie.getCosto()) {
+            log.error("❌ Puntos insuficientes. Balance: {}, Costo: {}",
+                    pass.getPointsBalance(), freebie.getCosto());
+            throw new IllegalArgumentException(
+                    String.format("Puntos insuficientes. Necesitas %d puntos, tienes %d",
+                            freebie.getCosto(), pass.getPointsBalance()));
+        }
 
-        exchange = exchangeRepository.save(exchange);
-        log.info("✅ Exchange registrado en MongoDB: ID={}, ParticipantId={}",
-                exchange.getId(), participantId);
+        log.info("✅ Validaciones completadas exitosamente");
 
-        // 5. Publicar evento para que el módulo 'pases' sume puntos
-        ExchangeRegisteredEvent event = new ExchangeRegisteredEvent(
-                passId,
-                freebieId,
-                freebies.getArticulo(),
-                freebies.getCosto()
-        );
 
-        eventPublisher.publishEvent(event);
-        log.info("📢 Evento ExchangeRegisteredEvent publicado: Pass={}, Puntos={}",
-                passId, freebies.getCosto());
+        // ========== REDUCIR STOCK ==========
+        boolean stockReducido = stockHandler.reduceStock(freebieId);
+        if (!stockReducido) {
+            log.error("❌ Error al reducir stock para Freebie: {}", freebieId);
+            throw new IllegalStateException("Error al reservar el freebie. Intenta nuevamente.");
+        }
 
-        return ExchangeResponse.fromEntity(exchange);
-    }
+        log.info("✅ Stock reducido exitosamente");
 
-    /**
-     * Obtiene el participantId asociado a un Pass mediante llamada REST.
-     *
-     * NOTA: Usamos REST en lugar de inyectar PassRepository para mantener
-     * el bajo acoplamiento entre módulos. Alternativa: Podríamos incluir
-     * el participantId en el request, pero eso requeriría que el cliente
-     * lo conozca, lo cual no es ideal.
-     */
-    Long getParticipantIdFromPass(Long passId) {
+
+        // ========== CREAR REGISTRO DE INTERCAMBIO ==========
         try {
-            PassResponse response = new PassResponse();
+            Exchange exchange = Exchange.crear(
+                    passId,
+                    pass.getParticipantId(),
+                    freebieId,
+                    freebie.getArticulo(),
+                    freebie.getCosto()
+            );
 
-            if (response.getParticipantId() == null) {
-                log.error("❌ No se pudo obtener participantId del Pass: {}", passId);
-                throw new IllegalArgumentException("Pass no encontrado o sin participantId: " + passId);
-            }
+            exchange = exchangeRepository.save(exchange);
+            log.info("✅ Exchange registrado en MongoDB: ID={}, ParticipantId={}",
+                    exchange.getId(), pass.getParticipantId());
 
-            log.debug("✅ ParticipantId obtenido: {} para Pass: {}",
-                    response.getParticipantId(), passId);
-            return response.getParticipantId();
+
+            // ========== PUBLICAR EVENTO PARA DESCONTAR PUNTOS ==========
+            ExchangeRegisteredEvent event = new ExchangeRegisteredEvent(
+                    passId,
+                    freebieId,
+                    freebie.getArticulo(),
+                    freebie.getCosto()
+            );
+
+            eventPublisher.publishEvent(event);
+            log.info("Evento ExchangeRegisteredEvent publicado: Pass={}, Puntos={}",
+                    passId, freebie.getCosto());
+
+            log.info("🎉 Intercambio completado exitosamente: Pass={}, Freebie={}, Puntos={}",
+                    passId, freebieId, freebie.getCosto());
+
+            return ExchangeResponse.fromEntity(exchange);
 
         } catch (Exception e) {
-            log.error("❌ Error al consultar Pass: {}", passId, e);
-            throw new IllegalArgumentException("Error al validar Pass: " + passId, e);
+            log.error("❌ Error después de reducir stock. Revirtiendo...", e);
+
+            eventPublisher.publishEvent(ExchangeFailedEvent.builder()
+                    .passId(passId)
+                    .freebieId(freebieId)
+                    .reason("Error al crear registro de intercambio: " + e.getMessage())
+                    .shouldRevertStock(true)
+                    .build());
+
+            throw new IllegalStateException(
+                    "Error al completar el intercambio. El stock ha sido revertido.", e);
         }
     }
 
-    /**
-     * Obtiene el historial de asistencias de un Pass.
-     */
+    // Obtiene el historial de intercambios de un Pass.
     @Transactional(readOnly = true)
     public List<ExchangeResponse> getExchangesByPass(Long passId) {
         log.debug("🔍 Obteniendo intercambios del Pass: {}", passId);
@@ -104,11 +140,6 @@ public class ExchangeService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Calcula el total de puntos acumulados por asistencias.
-     * NOTA: Este es un cálculo informativo basado en MongoDB.
-     * El balance real está en Pass (MySQL).
-     */
     @Transactional(readOnly=true)
     public Integer getTotalPuntosReducidos(Long passId) {
         log.debug("🔍 Calculando puntos reducidos del Pass: {}", passId);
@@ -118,27 +149,10 @@ public class ExchangeService {
                 .sum();
     }
 
-    /**
-     * Cuenta las asistencias de un Pass.
-     */
+    // Cuenta los intercambios de un Pass.
     @Transactional(readOnly = true)
     public long countExchangesByPass(Long passId) {
         log.debug("🔍 Contando intercambios del Pass: {}", passId);
         return exchangeRepository.countByPassId(passId);
-    }
-
-    /**
-     * Clase interna para mapear la respuesta del Pass API.
-     * Solo incluye los campos que necesitamos.
-     */
-    private static class PassResponse {
-        private Long passId;
-        private Long participantId;
-
-        public Long getPassId() { return passId; }
-        public void setPassId(Long passId) { this.passId = passId; }
-
-        public Long getParticipantId() { return participantId; }
-        public void setParticipantId(Long participantId) { this.participantId = participantId; }
     }
 }

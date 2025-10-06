@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AsistenciaSimuladorController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.points.assistance.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: AsistenciaSimuladorController (com.proyecto.congreso.points.assistance.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AsistenciaSimuladorController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.points.assistance.controller;
+&nbsp;
+&nbsp;import com.proyecto.congreso.points.assistance.dto.AssistanceRequest;
+&nbsp;import com.proyecto.congreso.points.assistance.dto.AssistanceResponse;
+&nbsp;import com.proyecto.congreso.points.assistance.service.AssistanceService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/asistencias&quot;)
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Tag(name = &quot;Asistencias&quot;, description = &quot;Gestión de asistencias a conferencias&quot;)
+&nbsp;public class AsistenciaSimuladorController {
+&nbsp;    private final AssistanceService assistanceService;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/marcar&quot;)
+&nbsp;    @Operation(summary = &quot;Marcar asistencia a una conferencia&quot;,
+&nbsp;            description = &quot;Registra la asistencia de un Pass a una conferencia y suma los puntos correspondientes&quot;)
+&nbsp;    public ResponseEntity&lt;AssistanceResponse&gt; marcarAsistencia(
+&nbsp;            @Valid @RequestBody AssistanceRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        AssistanceResponse response = assistanceService.marcarAsistencia(</b>
+<b class="fc">&nbsp;                request.getPassId(),</b>
+<b class="fc">&nbsp;                request.getConferenciaId()</b>
+&nbsp;        );
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/pass/{passId}&quot;)
+&nbsp;    @Operation(summary = &quot;Obtener historial de asistencias de un Pass&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;AssistanceResponse&gt;&gt; getAsistenciasByPass(
+&nbsp;            @PathVariable Long passId) {
+<b class="fc">&nbsp;        List&lt;AssistanceResponse&gt; asistencias = assistanceService.getAsistenciasByPass(passId);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(asistencias);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/conferencia/{conferenciaId}&quot;)
+&nbsp;    @Operation(summary = &quot;Obtener lista de asistentes a una conferencia&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;AssistanceResponse&gt;&gt; getAsistenciasByConferencia(
+&nbsp;            @PathVariable String conferenciaId) {
+<b class="fc">&nbsp;        List&lt;AssistanceResponse&gt; asistencias = assistanceService.getAsistenciasByConferencia(conferenciaId);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(asistencias);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/pass/{passId}/total-puntos&quot;)
+&nbsp;    @Operation(summary = &quot;Calcular total de puntos acumulados por asistencias&quot;)
+&nbsp;    public ResponseEntity&lt;Integer&gt; getTotalPuntosAcumulados(@PathVariable Long passId) {
+<b class="fc">&nbsp;        Integer totalPuntos = assistanceService.getTotalPuntosAcumulados(passId);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(totalPuntos);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/pass/{passId}/count&quot;)
+&nbsp;    @Operation(summary = &quot;Contar asistencias de un Pass&quot;)
+&nbsp;    public ResponseEntity&lt;Long&gt; countAsistenciasByPass(@PathVariable Long passId) {
+<b class="fc">&nbsp;        long count = assistanceService.countAsistenciasByPass(passId);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(count);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

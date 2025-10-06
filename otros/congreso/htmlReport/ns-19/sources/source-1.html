@@ -1,0 +1,222 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PointsDataInitializer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.points.calculator.config</a>
+</div>
+
+<h1>Coverage Summary for Class: PointsDataInitializer (com.proyecto.congreso.points.calculator.config)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PointsDataInitializer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (37/37)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PointsDataInitializer$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (37/37)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.points.calculator.config;
+&nbsp;
+&nbsp;import com.proyecto.congreso.points.calculator.dto.ConferencePointsData;
+&nbsp;import com.proyecto.congreso.points.calculator.model.FreebiePointsData;
+&nbsp;import com.proyecto.congreso.points.calculator.model.Conferencia;
+&nbsp;import com.proyecto.congreso.points.calculator.model.Freebies;
+&nbsp;import com.proyecto.congreso.points.calculator.repository.ConferenceRepository;
+&nbsp;import com.proyecto.congreso.points.calculator.repository.FreebieRepository;
+&nbsp;import com.proyecto.congreso.points.calculator.events.ConferenceDataImportedEvent;
+&nbsp;import com.proyecto.congreso.points.calculator.events.FreebieDataImportedEvent;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.context.event.EventListener;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;public class PointsDataInitializer {
+&nbsp;    private final FreebieRepository freebieRepository;
+&nbsp;    private final ConferenceRepository conferenceRepository;
+&nbsp;
+&nbsp;    public PointsDataInitializer(FreebieRepository freebieRepository,
+<b class="fc">&nbsp;                                 ConferenceRepository conferenceRepository) {</b>
+<b class="fc">&nbsp;        this.freebieRepository = freebieRepository;</b>
+<b class="fc">&nbsp;        this.conferenceRepository = conferenceRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @EventListener
+&nbsp;    @Transactional
+&nbsp;    public void handleFreebieDataImport(FreebieDataImportedEvent event) {
+<b class="fc">&nbsp;        FreebiePointsData data = event.data();</b>
+&nbsp;
+&nbsp;        // 1. Verificar si ya existe para evitar duplicados
+<b class="fc">&nbsp;        Optional&lt;Freebies&gt; existing = freebieRepository.findById(data.getFreebieId());</b>
+<b class="fc">&nbsp;        if (existing.isPresent()) {</b>
+<b class="fc">&nbsp;            log.debug(&quot;⏭️ Freebie ID {} ya existe, saltando...&quot;, data.getFreebieId());</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // 2. Convertir DTO a Entidad Freebie
+<b class="fc">&nbsp;        Freebies freebie = new Freebies();</b>
+<b class="fc">&nbsp;        freebie.setFreebieId(data.getFreebieId());</b>
+<b class="fc">&nbsp;        freebie.setArticulo(data.getArticulo());</b>
+<b class="fc">&nbsp;        freebie.setDescripcion(data.getDescripcion());</b>
+<b class="fc">&nbsp;        freebie.setStockInicial(data.getStockInicial());</b>
+<b class="fc">&nbsp;        freebie.setCosto(data.getCosto());</b>
+<b class="fc">&nbsp;        freebie.setStockActual(data.getStockActual());</b>
+&nbsp;
+<b class="fc">&nbsp;        freebieRepository.save(freebie);</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;✅ Freebie guardado: ID={}, Articulo={}, Costo={}&quot;,</b>
+<b class="fc">&nbsp;                data.getFreebieId(), data.getArticulo(), data.getCosto());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @EventListener
+&nbsp;    @Transactional
+&nbsp;    public void handleConferenceDataImport(ConferenceDataImportedEvent event) {
+<b class="fc">&nbsp;        ConferencePointsData data = event.data();</b>
+&nbsp;
+&nbsp;        // 1. Verificar si ya existe para evitar duplicados
+<b class="fc">&nbsp;        Optional&lt;Conferencia&gt; existing = conferenceRepository.findById(data.getConferenciaId());</b>
+<b class="fc">&nbsp;        if (existing.isPresent()) {</b>
+<b class="fc">&nbsp;            log.debug(&quot;⏭️ Conferencia ID {} ya existe, saltando...&quot;, data.getConferenciaId());</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // 2. Convertir DTO a Entidad Conferencia
+<b class="fc">&nbsp;        Conferencia conferencia = new Conferencia();</b>
+<b class="fc">&nbsp;        conferencia.setConferenciaId(data.getConferenciaId());</b>
+<b class="fc">&nbsp;        conferencia.setDia(data.getDia());</b>
+<b class="fc">&nbsp;        conferencia.setFecha(data.getFecha());</b>
+<b class="fc">&nbsp;        conferencia.setHoraInicio(data.getHoraInicio());</b>
+<b class="fc">&nbsp;        conferencia.setHoraFin(data.getHoraFin());</b>
+<b class="fc">&nbsp;        conferencia.setDuracion(data.getDuracion());</b>
+<b class="fc">&nbsp;        conferencia.setSede(data.getSede());</b>
+<b class="fc">&nbsp;        conferencia.setTipo(data.getTipo());</b>
+<b class="fc">&nbsp;        conferencia.setTitulo(data.getTitulo());</b>
+<b class="fc">&nbsp;        conferencia.setPonente(data.getPonente());</b>
+<b class="fc">&nbsp;        conferencia.setPuntos(data.getPuntos());</b>
+&nbsp;
+<b class="fc">&nbsp;        conferenceRepository.save(conferencia);</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;✅ Conferencia guardada: ID={}, Titulo=&#39;{}&#39;, Puntos={}&quot;,</b>
+<b class="fc">&nbsp;                data.getConferenciaId(), data.getTitulo(), data.getPuntos());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

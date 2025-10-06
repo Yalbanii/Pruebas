@@ -16,4 +16,5 @@ public class PassAdquiredEvent {
     private Long participantId;
     private String participantEmail;
     private LocalDateTime createdAt;
+
 }

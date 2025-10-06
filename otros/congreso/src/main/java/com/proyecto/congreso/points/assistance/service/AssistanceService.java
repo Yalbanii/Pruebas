@@ -56,7 +56,7 @@ public class AssistanceService {
         log.info("✅ Asistencia registrada en MongoDB: ID={}, Puntos total={}",
                 asistencia.getId(), getTotalPuntosAcumulados(passId));
 
-        // 5. Publicar evento para que el módulo 'pases' sume puntos
+        // 5. Publicar evento para que el m0dulo Pases sume puntos
         AssistanceRegisteredEvent event = new AssistanceRegisteredEvent(
                 passId,
                 conferenciaId,
@@ -70,19 +70,8 @@ public class AssistanceService {
 
         return AssistanceResponse.fromEntity(asistencia);
     }
-//
-//    /**
-//     * Obtiene el participantId asociado a un Pass mediante llamada REST.
-//     *
-//     * NOTA: Usamos REST en lugar de inyectar PassRepository para mantener
-//     * el bajo acoplamiento entre módulos. Alternativa: Podríamos incluir
-//     * el participantId en el request, pero eso requeriría que el cliente
-//     * lo conozca, lo cual no es ideal.
-//     */
 
-    /**
-     * Obtiene el historial de asistencias de un Pass.
-     */
+     // Historial de asistencias de un Pass
     @Transactional(readOnly = true)
     public List<AssistanceResponse> getAsistenciasByPass(Long passId) {
         log.debug("🔍 Obteniendo asistencias del Pass: {}", passId);
@@ -91,9 +80,7 @@ public class AssistanceService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Obtiene la lista de asistentes a una conferencia.
-     */
+     // Obtiene la lista de asistentes a una conferencia
     @Transactional(readOnly = true)
     public List<AssistanceResponse> getAsistenciasByConferencia(String conferenciaId) {
         log.debug("🔍 Obteniendo asistentes a la conferencia: {}", conferenciaId);
@@ -102,11 +89,7 @@ public class AssistanceService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Calcula el total de puntos acumulados por asistencias.
-     * NOTA: Este es un cálculo informativo basado en MongoDB.
-     * El balance real está en Pass (MySQL).
-     */
+    // Calcula el total de puntos acumulados por asistencias
     @Transactional(readOnly=true)
     public Integer getTotalPuntosAcumulados(Long passId) {
         log.debug("🔍 Calculando puntos acumulados del Pass: {}", passId);
@@ -116,19 +99,13 @@ public class AssistanceService {
                 .sum();
     }
 
-    /**
-     * Cuenta las asistencias de un Pass.
-     */
+    // Cuenta las asistencias de un Pass
     @Transactional(readOnly = true)
     public long countAsistenciasByPass(Long passId) {
         log.debug("🔍 Contando asistencias del Pass: {}", passId);
         return asistenciaRepository.countByPassId(passId);
     }
 
-    /**
-     * Clase interna para mapear la respuesta del Pass API.
-     * Solo incluye los campos que necesitamos.
-     */
     private static class PassResponse {
         private Long passId;
         private Long participantId;

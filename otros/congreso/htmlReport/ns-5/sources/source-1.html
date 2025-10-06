@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ParticipantController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.participantes.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: ParticipantController (com.proyecto.congreso.participantes.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ParticipantController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (39/39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.participantes.controller;
+&nbsp;
+&nbsp;import com.proyecto.congreso.participantes.dto.ParticipantRequest;
+&nbsp;import com.proyecto.congreso.participantes.dto.ParticipantResponse;
+&nbsp;import com.proyecto.congreso.participantes.model.Participant;
+&nbsp;import com.proyecto.congreso.participantes.service.ParticipantService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/participants&quot;)
+&nbsp;@RequiredArgsConstructor
+&nbsp;@Tag(name = &quot;Participant&quot;, description = &quot;Participant management APIs&quot;)
+&nbsp;public class ParticipantController {
+&nbsp;
+&nbsp;    private final ParticipantService participantService;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/participant&quot;)
+&nbsp;    @Operation(summary = &quot;Create a new Participant&quot;)
+&nbsp;    public ResponseEntity&lt;ParticipantResponse&gt; createParticipant(@Valid @RequestBody ParticipantRequest request) {
+&nbsp;
+<b class="fc">&nbsp;        Participant participant = new Participant();</b>
+<b class="fc">&nbsp;        participant.setName(request.getName());</b>
+<b class="fc">&nbsp;        participant.setLastName(request.getLastName());</b>
+<b class="fc">&nbsp;        participant.setEmail(request.getEmail());</b>
+<b class="fc">&nbsp;        participant.setPhone(request.getPhone());</b>
+<b class="fc">&nbsp;        participant.setNacionality(request.getNacionality());</b>
+<b class="fc">&nbsp;        participant.setAge(request.getAge());</b>
+<b class="fc">&nbsp;        participant.setArea(request.getArea());</b>
+&nbsp;
+<b class="fc">&nbsp;        Participant createdParticipant = participantService.createParticipant(participant);</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED)</b>
+<b class="fc">&nbsp;                .body(ParticipantResponse.fromEntity(createdParticipant));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Get Participant by ID&quot;)
+&nbsp;    public ResponseEntity&lt;ParticipantResponse&gt; getParticipantById(@PathVariable Long id) {
+<b class="fc">&nbsp;        Participant participant = participantService.getParticipantById(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(ParticipantResponse.fromEntity(participant));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/participants&quot;)
+&nbsp;    @Operation(summary = &quot;Get all Participants&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;ParticipantResponse&gt;&gt; getAllParticipants() {
+<b class="fc">&nbsp;        List&lt;Participant&gt; participants = participantService.getAllParticipants();</b>
+<b class="fc">&nbsp;        List&lt;ParticipantResponse&gt; response = participants.stream()</b>
+<b class="fc">&nbsp;                .map(ParticipantResponse::fromEntity)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/status/{status}&quot;)
+&nbsp;    @Operation(summary = &quot;Get Participants by status&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;ParticipantResponse&gt;&gt; getParticipantByStatus(
+&nbsp;            @PathVariable Participant.ParticipantStatus status) {
+<b class="fc">&nbsp;        List&lt;Participant&gt; participants = participantService.getParticipantByStatus(status);</b>
+<b class="fc">&nbsp;        List&lt;ParticipantResponse&gt; response = participants.stream()</b>
+<b class="fc">&nbsp;                .map(ParticipantResponse::fromEntity)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Update Participant&quot;)
+&nbsp;    public ResponseEntity&lt;ParticipantResponse&gt; updateParticipant(
+&nbsp;            @PathVariable Long id,
+&nbsp;            @Valid @RequestBody ParticipantRequest request) {
+<b class="fc">&nbsp;        Participant participant = new Participant();</b>
+<b class="fc">&nbsp;        participant.setName(request.getName());</b>
+<b class="fc">&nbsp;        participant.setLastName(request.getLastName());</b>
+<b class="fc">&nbsp;        participant.setEmail(request.getEmail());</b>
+<b class="fc">&nbsp;        participant.setPhone(request.getPhone());</b>
+<b class="fc">&nbsp;        participant.setNacionality(request.getNacionality());</b>
+<b class="fc">&nbsp;        participant.setAge(request.getAge());</b>
+<b class="fc">&nbsp;        participant.setArea(request.getArea());</b>
+&nbsp;
+<b class="fc">&nbsp;        Participant updatedParticipant = participantService.updateParticipant(id, participant);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(ParticipantResponse.fromEntity(updatedParticipant));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    @Operation(summary = &quot;Delete Participant (soft delete)&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteParticipant(@PathVariable Long id) {
+<b class="fc">&nbsp;        participantService.deleteParticipant(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.noContent().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/{id}/activate&quot;)
+&nbsp;    @Operation(summary = &quot;Activate Participant&quot;)
+&nbsp;    public ResponseEntity&lt;ParticipantResponse&gt; activateParticipant(@PathVariable Long id) {
+<b class="fc">&nbsp;        Participant participant = participantService.activateParticipant(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(ParticipantResponse.fromEntity(participant));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/{id}/deactivate&quot;)
+&nbsp;    @Operation(summary = &quot;Deactivate Participant&quot;)
+&nbsp;    public ResponseEntity&lt;ParticipantResponse&gt; deactivateParticipant(@PathVariable Long id) {
+<b class="fc">&nbsp;        Participant participant = participantService.deactivateParticipant(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(ParticipantResponse.fromEntity(participant));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>

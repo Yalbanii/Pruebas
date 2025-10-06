@@ -1,0 +1,119 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PassRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.proyecto.congreso.pases.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: PassRepository (com.proyecto.congreso.pases.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">PassRepository$MockitoMock$MpRCcj4O</td>
+  </tr>
+  <tr>
+    <td class="name">PassRepository$MockitoMock$MpRCcj4O$auxiliary$8MMLHHN0</td>
+  </tr>
+  <tr>
+    <td class="name">PassRepository$MockitoMock$MpRCcj4O$auxiliary$LLXjIQvo</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.proyecto.congreso.pases.repository;
+&nbsp;
+&nbsp;import com.proyecto.congreso.pases.model.Pass;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface PassRepository extends JpaRepository&lt;Pass, Long&gt; {
+&nbsp;
+&nbsp;    // Verificar si existe un número de Pase
+&nbsp;    boolean existsByPassId(Long passId);
+&nbsp;
+&nbsp;    // Buscar inscripciones por participantId
+&nbsp;    List&lt;Pass&gt; findByParticipantId(Long participantId);
+&nbsp;
+&nbsp;    // Buscar Pases por estado
+&nbsp;    List&lt;Pass&gt; findByStatus(Pass.PassStatus status);
+&nbsp;
+&nbsp;    // Buscar Pases por tipo
+&nbsp;    List&lt;Pass&gt; findByPassType(Pass.PassType passType);
+&nbsp;
+&nbsp;    // Buscar Pases activos de un participante
+&nbsp;    @Query(&quot;SELECT a FROM Pass a WHERE a.participantId = :participantId AND a.status = &#39;ACTIVE&#39;&quot;)
+&nbsp;    List&lt;Pass&gt; findActivePassByParticipantId(@Param(&quot;participantId&quot;) Long participantId);
+&nbsp;
+&nbsp;    // Contar Pases de un participante
+&nbsp;    long countByParticipantId(Long participantId);
+&nbsp;
+&nbsp;    // Buscar cuentas activas (para batch processing)
+&nbsp;    @Query(&quot;SELECT a FROM Pass a WHERE a.status = &#39;ACTIVE&#39;&quot;)
+&nbsp;    List&lt;Pass&gt; findActivePass();
+&nbsp;
+&nbsp;    List&lt;Pass&gt; findByPassId(Long passId);
+&nbsp;
+&nbsp;    Optional&lt;Long&gt; findParticipantIdByPassId(Long passId);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-05 21:51</div>
+</div>
+</body>
+</html>
